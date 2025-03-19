@@ -21,24 +21,12 @@ supported by `metaextractoR`. Run the code below in Terminal or Console
 to install models:
 
 ``` r
-ollama run llama3.1
+ollama run your_choice_of_models
 ```
 
-``` r
-llama run deepseek-r1:671b
-```
+Explore your choice of models: [Ollama](https://ollama.com)
 
-``` r
-llama run medllama2
-```
-
-``` r
-llama run nuextract
-```
-
-``` r
-llama run gemma2:2b
-```
+Currently this version of the package only supports local LLMs.
 
 ## Workflow
 
@@ -55,8 +43,16 @@ while keeping a human in the loop for accuracy and oversight.
 
 For documentation: see working paper [working paper]()
 
-### Full-text extraction
+### 1. Set up extraction data
 
 Once full-text review has been completed, you should have a list of
-articles included for the full-text extraction. Based on the pre-defined
-data extraction element, create variables using
+articles included for the full-text extraction. At this stage, the user
+should have an csv file that contains a list of abstracts. If you are
+using [Covidence](https://www.covidence.org), the csv file can be
+downloaded from
+
+Based on the pre-defined data extraction element, create variables using
+the `add_predefined_vars` function.
+
+Once you have created new columns, check the data and make sure that all
+the

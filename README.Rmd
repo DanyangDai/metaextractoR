@@ -52,6 +52,16 @@ Once full-text review has been completed, you should have a list of articles inc
 
 Based on the pre-defined data extraction element, create variables using the `add_predefined_vars` function. 
 
-Once you have created new columns, check the data and make sure that all the 
+Before processing to the next step, check the current dataset contains all the data items with `_llm` and `_manual`. Most importantly, this data must contains abstract column. Use `colnames()` function to check the available variables in the dataset. 
+
+
+
+### 2. Preliminary manual extraction
+
+This extraction step aims to identify data items that is available in the abstract. 
+
+
+
+
 
 

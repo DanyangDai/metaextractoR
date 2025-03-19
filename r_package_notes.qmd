@@ -1,0 +1,57 @@
+---
+title: "Package Development Notes"
+format: html
+from: markdown+emoji
+---
+
+## Notes for creating a package
+
+Following the guideline recommanded by [R Packages (2e)](https://r-pkgs.org)
+
+-   Use `load_all()` for loading in functions created in the R folder.
+
+-   Use `check()` to see if there is any errors and warnings with the current version of the package.
+
+-   Use `use_package()` for prerequisite packages.
+
+-   `use_r()`, `use_test()` and `use_package` for check dependencies.
+
+-   check R package name avaiability: `available("metaextractoR")`: all good to go.
+
+### Package components
+
+-   R code: organise by family of functions.
+
+-   Code styling: `usethis::use_tidy_style()`
+
+-   DO NOT USE: `library`, `require` and `source`
+
+-   The `with_*()`functions: don't think I understand it well enough. Need Emi to double check where it needs to be replaced with `with_*()` functions.
+
+### Package data
+
+-   I will put together some example data: `usethis::use_data(my_pkg_data)` automatically create the data folder and data file.
+
+-   How to document the data? Where the documentation for the data goes?
+
+-   File path for process data storage. In the pre_processing.R function scrip, I have defined the file path. Might need to use `pkg_example` to check the paths. Not sure if it is appropriate. @Emi could you please help and check it please? :pleading_face:
+
+### Metadata - DESCRIPTION
+
+-   Imports: all required packages. Add additional versions.
+
+-   SystemRequirements: what environment is needed to run this package? @Emi, please help :pleading_face:
+
+-  Use `pak::pkg_deps_tree()` to check dependies 
+
+
+### Metadata - NAMESPACE
+
+- How do I know what to put in to my NAMESPACE? 
+  - `export()`
+  - `S3method()`
+  - `importFrom()`
+  - `import()`
+  - `useDynLib()`
+
+

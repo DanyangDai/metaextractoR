@@ -13,6 +13,13 @@
 #   Check Package:             'Cmd + Shift + E'
 #   Test Package:              'Cmd + Shift + T'
 
+#' @param x A character vector with one element.
+#' @param split What to split on.
+#'
+#' @return A character vector.
+#' @export
+#'
+#' @examples
 
 
 add_predefined_vars <- function(abstract_data,list_vars){
@@ -41,4 +48,8 @@ save_stage_1_data <- function(abstract_data) {
   write.csv(abstract_data, file = file_path,row.names = F)
 
 }
+
+
+
+
 

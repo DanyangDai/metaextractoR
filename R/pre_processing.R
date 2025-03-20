@@ -1,26 +1,17 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   https://r-pkgs.org
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Cmd + Shift + B'
-#   Check Package:             'Cmd + Shift + E'
-#   Test Package:              'Cmd + Shift + T'
+# Pre-processing before shinyapps -------------------------------------------------------------
 
-#' @param x A character vector with one element.
-#' @param split What to split on.
+#' @title Pre-processing functions before shinyapps
 #'
-#' @return A character vector.
-#' @export
+#' @description Pre-processing functions and saving intermediate data
 #'
-#' @examples
-
+#' @rdname add_predefined_vars
+#'
+#' @param abstract_data a csv file contains abstract information. This could be the csv file downloaded from covidence
+#'
+#' @param list_vars a vector of data elements you want to extract. i.e. c("no_participants,"no_female","..")
+#'
+#' @return new dataset with additional empty columns
+#'
 
 add_predefined_vars <- function(abstract_data,list_vars){
 
@@ -39,6 +30,18 @@ add_predefined_vars <- function(abstract_data,list_vars){
 
 }
 
+
+#' @rdname save_stage_1_data
+#'
+#' @param abstract_data a csv file contains abstract information as well as the variables you want to extract.
+#'
+#'@description
+#'This function will save the abstract data with empty columns to the processed data folder.
+#'This csv file will be used in the shinyapp 1
+#'The data will be stored in metaextroctor_process_data
+#'
+#'  @returns a csv file saved in the metaextroctor_process_data file named stage_0_data.csv
+#'
 save_stage_1_data <- function(abstract_data) {
 
   dir.create(metaextroctor_process_data, recursive = TRUE)

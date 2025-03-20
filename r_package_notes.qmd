@@ -16,7 +16,7 @@ Following the guideline recommanded by [R Packages (2e)](https://r-pkgs.org)
 
 -   `use_r()`, `use_test()` and `use_package` for check dependencies.
 
--   check R package name avaiability: `available("metaextractoR")`: all good to go.
+-   check R package name availability: `available("metaextractoR")`: all good to go.
 
 ### Package components
 
@@ -42,16 +42,36 @@ Following the guideline recommanded by [R Packages (2e)](https://r-pkgs.org)
 
 -   SystemRequirements: what environment is needed to run this package? @Emi, please help :pleading_face:
 
--  Use `pak::pkg_deps_tree()` to check dependies 
+-  Use `pak::pkg_deps_tree()` to check dependencies 
 
 
 ### Metadata - NAMESPACE
 
-- How do I know what to put in to my NAMESPACE? 
+- How do I know what to put in to my NAMESPACE?  @Emi Please help? :pleading_face:
   - `export()`
   - `S3method()`
   - `importFrom()`
   - `import()`
   - `useDynLib()`
+
+
+## Documentation
+
+
+- Write documentation in the R folder with the R scripts.
+
+- The one starts with # is called `roxygen` comments. These are the comments you put in manually. 
+
+- Once you have some `roxygen` comments for your function, run `devtools::document()` to generate/update the package's `.Rd` file. 
+
+- ? what does the `@importFrom` in the R folder script do? Would I need to use that? 
+
+- Each R function document can only have one `@title`. Use `@rdname` to separate block of function and documentation. 
+
+- Use `@examples` to write examples. The examples should be in the examples folder and it is a R script. 
+
+- 
+
+
 
 

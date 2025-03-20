@@ -68,7 +68,7 @@ ul.task-list li input[type="checkbox"] {
 <li><p>Use <code>check()</code> to see if there is any errors and warnings with the current version of the package.</p></li>
 <li><p>Use <code>use_package()</code> for prerequisite packages.</p></li>
 <li><p><code>use_r()</code>, <code>use_test()</code> and <code>use_package</code> for check dependencies.</p></li>
-<li><p>check R package name avaiability: <code>available("metaextractoR")</code>: all good to go.</p></li>
+<li><p>check R package name availability: <code>available("metaextractoR")</code>: all good to go.</p></li>
 </ul>
 <section id="package-components" class="level3">
 <h3 class="anchored" data-anchor-id="package-components">Package components</h3>
@@ -84,17 +84,41 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><p>I will put together some example data: <code>usethis::use_data(my_pkg_data)</code> automatically create the data folder and data file.</p></li>
 <li><p>How to document the data? Where the documentation for the data goes?</p></li>
-<li><p>File path for process data storage. In the pre_processing.R function scrip, I have defined the file path. Might need to use <code>pkg_example</code> to check the paths. Not sure if it is appropriate. <span class="citation" data-cites="Emi">@Emi</span> could you please help and check it please?</p></li>
+<li><p>File path for process data storage. In the pre_processing.R function scrip, I have defined the file path. Might need to use <code>pkg_example</code> to check the paths. Not sure if it is appropriate. <span class="citation" data-cites="Emi">@Emi</span> could you please help and check it please? <span class="emoji" data-emoji="pleading_face">🥺</span></p></li>
 </ul>
 </section>
 <section id="metadata---description" class="level3">
 <h3 class="anchored" data-anchor-id="metadata---description">Metadata - DESCRIPTION</h3>
 <ul>
 <li><p>Imports: all required packages. Add additional versions.</p></li>
-<li><p>SystemRequirements: what environment is needed to run this package? <span class="citation" data-cites="Emi">@Emi</span>, please help <span class="emoji" data-emoji="smile">😄</span></p></li>
-<li></li>
+<li><p>SystemRequirements: what environment is needed to run this package? <span class="citation" data-cites="Emi">@Emi</span>, please help <span class="emoji" data-emoji="pleading_face">🥺</span></p></li>
+<li><p>Use <code>pak::pkg_deps_tree()</code> to check dependencies</p></li>
 </ul>
 </section>
+<section id="metadata---namespace" class="level3">
+<h3 class="anchored" data-anchor-id="metadata---namespace">Metadata - NAMESPACE</h3>
+<ul>
+<li>How do I know what to put in to my NAMESPACE? <span class="citation" data-cites="Emi">@Emi</span> Please help? <span class="emoji" data-emoji="pleading_face">🥺</span>
+<ul>
+<li><code>export()</code></li>
+<li><code>S3method()</code></li>
+<li><code>importFrom()</code></li>
+<li><code>import()</code></li>
+<li><code>useDynLib()</code></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="documentation" class="level2">
+<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
+<ul>
+<li><p>Write documentation in the R folder with the R scripts.</p></li>
+<li><p>The one starts with # is called <code>roxygen</code> comments. These are the comments you put in manually.</p></li>
+<li><p>Once you have some <code>roxygen</code> comments for your function, run <code>devtools::document()</code> to generate/update the package’s <code>.Rd</code> file.</p></li>
+<li><p>? what does the <code>@importFrom</code> in the R folder script do? Would I need to use that?</p></li>
+<li><p>Each R function document can only have one <code>@title</code>. Use <code>@rdname</code> to separate block of function and documentation.</p></li>
+<li><p>Use <code>@examples</code> to write examples. The examples should be in the examples folder and it is a R script.</p></li>
+</ul>
 </section>
 
 </main>

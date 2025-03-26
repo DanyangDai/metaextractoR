@@ -8,6 +8,7 @@
 #'
 
 glance_manual_extractor <- function(){
+
   checkbox_css <- HTML("
   .checkbox-group {
     width: 100%;
@@ -72,6 +73,7 @@ glance_manual_extractor <- function(){
                                 "Random 5% of data" = "percent5",
                                 "Random 10% of data" = "percent10",
                                 "All data" = "alldata")),
+        textOutput("sample_info"),
 
         ### Random button
 
@@ -121,15 +123,15 @@ glance_manual_extractor <- function(){
 
     current_row <- reactiveVal(1)
 
-
+    #browser()
     # Reactive expression for the data
     data <- reactive({
-      req(input$file)
+      req(input$file1)
 
       # Read the CSV file
       tryCatch(
         {
-          read_csv(input$file$datapath)
+          read_csv(input$file1$datapath)
         },
         error = function(e) {
           # Show an error message if file can't be read
@@ -140,7 +142,7 @@ glance_manual_extractor <- function(){
     })
 
     # Reactive value for the sampled data
-    sampled_data <- reactiveVal(NULL)
+    sampled_data <- reactiveVal()
 
 
     # Function to sample the data
@@ -150,35 +152,38 @@ glance_manual_extractor <- function(){
 
       nrows <- nrow(df)
 
+      if(nrows <10){showNotification(paste("This dataset have less than 10 studies,read all studies in."), type = "message")}
+
+
       if (input$sample_method == "rows10") {
         sample_size <- min(10, nrows)
         sample_method_text <- "10 random rows"
       }  else if(input$sample_method == "percent5") {
-          sample_size <- max(1, round(nrows * 0.05))
-          sample_method_text <- "5% of data (random)"}
-          else if (input$sample_method == "percent10") {
-              sample_size <- max(1, round(nrows * 0.1))
-              sample_method_text <- "10% of data (random)"
-            } else{
-              sample_size <- max(1, round(nrows * 1))
-            sample_method_text <- "All data"
-          }
+        sample_size <- max(1, round(nrows * 0.05))
+        sample_method_text <- "5% of data (random)"}
+      else if (input$sample_method == "percent10") {
+        sample_size <- max(1, round(nrows * 0.1))
+        sample_method_text <- "10% of data (random)"
+      } else{
+        sample_size <- max(1, round(nrows * 1))
+        sample_method_text <- "All data"
+      }
 
+      if (nrows > 0) {
+        sampled_indices <- sample(1:nrows, sample_size)
+        sampled <- df[sampled_indices, ]
 
-    if (nrows > 0) {
-      sampled_indices <- sample(1:nrows, sample_size)
-      sampled <- df[sampled_indices, ]
-
-      # Return both the sampled data and information about the sample
-      list(
-        data = sampled,
-        info = paste("Showing", sample_size, "of", nrows, "rows -", sample_method_text)
-      )
-    } else {
-      list(
-        data = df,
-        info = "No data to sample"
-      )
+        # Return both the sampled data and information about the sample
+        list(
+          data = sampled,
+          info = paste("Showing", sample_size, "of", nrows, "rows -", sample_method_text)
+        )
+      } else {
+        list(
+          data = df,
+          info = "No data to sample"
+        )
+      }
     }
 
 
@@ -187,15 +192,18 @@ glance_manual_extractor <- function(){
       result <- sample_data()
       sampled_data(result)
 
-      updateSelectInput(session, "var_manual", choices = grep("_manual$", names(sampled_data),value = T))
+      updateSelectInput(session, "var_manual", choices = grep("_manual$", names(result[[1]]),value = T))
 
-      updateSelectInput(session, "selected_vars", choices = names(sampled_data))
+      updateSelectInput(session, "selected_vars", choices = names(result[[1]]))
     })
 
     # Display selected data
     output$selected_data <- renderDT({
-      req(sampled_data(), input$selected_vars)
-      df <- sampled_data()[current_row(), input$selected_vars, drop = FALSE]
+      req(list(data()), input$selected_vars)
+
+      sample_result <- sampled_data()
+
+      df <- sample_result[[1]][current_row(), input$selected_vars, drop = FALSE]
       datatable(df,
                 options = list(dom = 't', # Only show the table, no controls
                                ordering = FALSE,
@@ -206,13 +214,13 @@ glance_manual_extractor <- function(){
 
     checkman_long <- reactive({
 
-      req(sampled_data())
+      req(sampled_data(),list(data()))
 
-      #  browser()
+      result <- sampled_data()
 
-      col_man <- grep("_manual$", names(sampled_data()))
+      col_man <- grep("_manual$", names(result[[1]]))
 
-      sampled_data()[current_row(),col_man,drop = FALSE] |>
+      result[[1]][current_row(),col_man,drop = FALSE] |>
         pivot_longer(cols = ends_with("_manual"),
                      names_to = "Manual_variable",
                      values_to = "Manual_value",
@@ -233,21 +241,28 @@ glance_manual_extractor <- function(){
 
     # Observe edits and update the data
     observeEvent(input$add_manual_var_cell_edit, {
-      #browser()
+      # browser()
+      req(list(data()))
       info <- input$add_manual_var_cell_edit
       # str(info)
       new_data <- sampled_data()
-      new_data[current_row(), checkman_long()$Manual_variable[info[["row"]]]] <- info$value
+      new_data[[1]][current_row(), checkman_long()$Manual_variable[info[["row"]]]] <- info$value
       sampled_data(new_data)
     })
 
 
     # Navigate to next row
     observeEvent(input$next_btn, {
-      req(sampled_data())
-      current <- current_row()
-      if (current < nrow(sampled_data())) {
-        current_row(current + 1)
+      req(list(data()))
+      sample_result <- sampled_data()
+      if (!is.null(sample_result) && nrow(sample_result$data) > 0) {
+        curr <- current_row()
+        if (curr < nrow(sample_result$data)) {
+          current_row(curr + 1)
+        } else {
+          # Wrap around to the first row
+          current_row(1)
+        }
       }
       updateTextInput(session, "new_var_value",value = "")
     })
@@ -255,10 +270,16 @@ glance_manual_extractor <- function(){
     # Navigate to previouse row
 
     observeEvent(input$pre_btn, {
-      req(sampled_data())
-      current <- current_row()
-      if (current > 1) {
-        current_row(current - 1)
+      req(list(data()))
+      sample_result <- sampled_data()
+      if (!is.null(sample_result) && nrow(sample_result$data) > 0) {
+        curr <- current_row()
+        if (curr > 1) {
+          current_row(curr - 1)
+        } else {
+          # Wrap around to the last row
+          current_row(nrow(sample_result$data))
+        }
       }
       updateTextInput(session, "new_var_value",value = "")
 
@@ -266,21 +287,31 @@ glance_manual_extractor <- function(){
 
     # Display current row indicator
     output$row_indicator <- renderText({
-      req(sampled_data())
-      sprintf("Row %d of %d", current_row(), nrow(sampled_data()))
+      sample_result <- sampled_data()
+      if (!is.null(sample_result) && nrow(sample_result$data) > 0) {
+        paste("Row", current_row(), "of", nrow(sample_result$data))
+      } else {
+        "No data"
+      }
     })
 
 
     # Downloadable csv of selected dataset
     output$downloadData <- downloadHandler(
       filename = function() {
-        paste("data-step1", Sys.Date(), ".csv", sep="")
+        paste("data-step1-", Sys.Date(), ".csv", sep="")
       },
       content = function(file) {
         write.csv(sampled_data(), file, row.names = FALSE)
       }
     )
 
+    output$sample_info <- renderText({
+      sample_result <- sampled_data()
+      if (!is.null(sample_result)) {
+        sample_result$info
+      }
+    })
 
   }
 

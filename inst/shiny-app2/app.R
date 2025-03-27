@@ -155,24 +155,23 @@ server <- function(input, output,session) {
   # Don't know how
   temp <- NULL
 
-  observe({
-    temp <<- reactiveValues(
-      model = input$model_name,
-      prompt = input$LLM_prompt,
-      row = input$row_indicator
-    )
-    print("reached observe")
-    runjs('console.log("reached");console.log(document.getElementById("LLM_prompt").style.backgroundColor);document.getElementById("LLM_prompt").style.backgroundColor = "white";')
-
-  })
-
-
   log_dir <- "log_files"
 
   temp_log_file <- tempfile(pattern = "user_log_", fileext = ".csv")
 
   current_data <- reactiveVal()
   current_row <- reactiveVal(1)
+
+  observe({
+    temp <<- reactiveValues(
+      model = input$model_name,
+      prompt = input$LLM_prompt,
+      row = current_row(),
+    )
+    # print("reached observe")
+    runjs('console.log("reached");console.log(document.getElementById("LLM_prompt").style.backgroundColor);document.getElementById("LLM_prompt").style.backgroundColor = "white";')
+
+  })
 
   observe({
     req(input$file1)

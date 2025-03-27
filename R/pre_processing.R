@@ -31,18 +31,20 @@ add_predefined_vars <- function(abstract_data,list_vars){
 }
 
 
-#' @rdname save_stage_1_data
+#' @title save_stage_1_data
 #'
-#' @param abstract_data a csv file contains abstract information as well as the variables you want to extract.
-#'
-#'@description
+#' @description
 #'This function will save the abstract data with empty columns to the processed data folder.
 #'This csv file will be used in the shinyapp 1
 #'The data will be stored in metaextroctor_process_data
 #'
-#'  @returns a csv file saved in the metaextroctor_process_data file named stage_0_data.csv
+#' @param abstract_data a csv file contains abstract information as well as the variables you want to extract.
 #'
+#' @returns a csv file saved in the metaextroctor_process_data file named stage_0_data.csv
+#' @export
 save_stage_1_data <- function(abstract_data) {
+
+  # check to see if the folder exist or not
 
   dir.create(metaextroctor_process_data, recursive = TRUE)
 

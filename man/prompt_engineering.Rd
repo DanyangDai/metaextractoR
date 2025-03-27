@@ -9,3 +9,8 @@ prompt_engineering()
 \description{
 A shinyapp that designed for model testing and prompt engineering.
 }
+\examples{
+\donotrun {
+prompt_engineering()
+}
+}

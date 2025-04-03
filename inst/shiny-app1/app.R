@@ -5,6 +5,8 @@ library(DT)
 library(data.table)
 library(shinyEventLogger)
 library(tidyverse)
+library(shinyFiles)
+
 
 # CSS ----------------------------------------------------------------------
 
@@ -110,7 +112,7 @@ ui <- fluidPage(
     ),
     # Input: Variable selection
     # Download Button
-    downloadButton("downloadData", "Download CSV")
+    shinySaveButton("saveFile", "Save CSV", "Save as...")
   )
 )
 
@@ -295,16 +297,22 @@ server <- function(input, output, session) {
     }
   })
 
+  volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
 
-  # Downloadable csv of selected dataset
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      paste("data-step1-", Sys.Date(), ".csv", sep="")
-    },
-    content = function(file) {
-      write.csv(sampled_data(), file, row.names = FALSE)
+  shinyFileSave(input, "saveFile", roots = volumes, session = session)
+
+  observeEvent(input$saveFile, {
+    fileinfo <- parseSavePath(volumes, input$saveFile)
+
+    if (nrow(fileinfo) > 0) {
+      filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_1",".csv")
+      if (!grepl("\\.csv$", filepath)) {
+        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_1",".csv")  # Ensure .csv extension
+      }
+      write.csv(sampled_data(), filepath, row.names = FALSE)
+      showNotification(paste("File saved to:", filepath), type = "message")
     }
-  )
+  })
 
   output$sample_info <- renderText({
     sample_result <- sampled_data()

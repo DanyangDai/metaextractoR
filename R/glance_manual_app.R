@@ -7,8 +7,8 @@
 #'
 #' @export
 
-llm_manual_check <- function(){
-  app_dir <- system.file("shiny-app3", package = "metaextractoR")
+glance_manual_app <- function(){
+  app_dir <- system.file("shiny-app1", package = "metaextractoR")
 
   shiny::runApp(app_dir, display.mode = "normal")
 }

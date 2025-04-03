@@ -3,6 +3,7 @@ library(bslib)
 library(DT)
 library(dplyr)
 library(readr)
+library(shinyFiles)
 
 # UI ----------------------------------------------------------------------
 
@@ -62,7 +63,7 @@ ui <- page_fluid(
     )
   ),
 
-  uiOutput("save_button_ui")
+  shinySaveButton("saveFile", "Save CSV", "Save as...")
 )
 
 # SERVER ------------------------------------------------------------------
@@ -78,6 +79,11 @@ server <- function(input, output, session) {
     other_columns = NULL
   )
 
+
+  # Downloadable csv of selected dataset
+  volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
+
+  shinyFileSave(input, "saveFile", roots = volumes, session = session)
 
   # Read CSV file when uploaded
   observeEvent(input$file, {
@@ -266,34 +272,65 @@ server <- function(input, output, session) {
     }
   })
 
-  # Show save button only if data is loaded
-  output$save_button_ui <- renderUI({
+  observeEvent(input$saveFile, {
+
+    #browser()
+
+    fileinfo <- parseSavePath(volumes, input$saveFile)
     req(vals$data)
-    card(
-      card_header("Save Changes"),
-      downloadButton("save_data", "Download Modified CSV", class = "btn-success")
-    )
+
+    # Reconstruct the full data frame with modifications
+    data <- vals$data
+
+    # Update with modified _manual values
+    manual_cols <- grep("_manual$", names(data), value = TRUE)
+
+    for (col in manual_cols) {
+      data[, col] <- vals$manual_data[, col]
+    }
+
+
+    if (nrow(fileinfo) > 0) {
+      filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_3",".csv")
+      if (!grepl("\\.csv$", filepath)) {
+        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_3",".csv")  # Ensure .csv extension
+      } else{
+        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_3",".csv")
+      }
+      write.csv(data, filepath, row.names = FALSE)
+      showNotification(paste("File saved to:", filepath), type = "message")
+    }
   })
 
-  # Download handler for the modified data
-  output$save_data <- downloadHandler(
-    filename = function() {
-      paste0("modified_", input$file$name)
-    },
-    content = function(file) {
-      # Reconstruct the full data frame with modifications
-      data <- vals$data
+  # Show save button only if data is loaded
+  # output$save_button_ui <- renderUI({
+  #   req(vals$data)
+  #   card(
+  #     card_header("Save Changes"),
+  #     downloadButton("save_data", "Download Modified CSV", class = "btn-success")
+  #   )
+  # })
 
-      # Update with modified _manual values
-      manual_cols <- grep("_manual$", names(data), value = TRUE)
-      for (col in manual_cols) {
-        data[, col] <- vals$manual_data[, col]
-      }
-
-      # Write to CSV
-      write_csv(data, file)
-    }
-  )
+#
+#   # Download handler for the modified data
+#   output$save_data <- downloadHandler(
+#     filename = function() {
+#       paste0("modified_", input$file$name)
+#     },
+#     content = function(file) {
+#       # Reconstruct the full data frame with modifications
+#       data <- vals$data
+#
+#       # Update with modified _manual values
+#       manual_cols <- grep("_manual$", names(data), value = TRUE)
+#       for (col in manual_cols) {
+#         data[, col] <- vals$manual_data[, col]
+#       }
+#
+#       # Write to CSV
+#       write_csv(data, file)
+#     }
+#   )
 }
 
 shinyApp(ui = ui, server = server)

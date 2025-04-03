@@ -5,6 +5,8 @@ library(DT)
 library(ellmer)
 library(purrr)
 library(shinyjs)
+library(shinyFiles)
+
 
 
 # CSS ----------------------------------------------------------------------
@@ -140,7 +142,7 @@ ui <- fluidPage(
         column(6, actionButton("pre_btn","Previous")),
         column(6,  actionButton("next_btn","Next"))
       ),
-      downloadButton("downloadData", "Download CSV"),
+      shinySaveButton("saveFile", "Save CSV", "Save as...")
 
     ),
 
@@ -369,15 +371,22 @@ server <- function(input, output,session) {
   #  })
   # #
   # Downloadable csv of selected dataset
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      paste("data_step2_", Sys.time(), ".csv", sep="")
-    },
-    content = function(file) {
-      write.csv(current_data(), file, row.names = FALSE)
-    }
-  )
+  volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
 
+  shinyFileSave(input, "saveFile", roots = volumes, session = session)
+
+  observeEvent(input$saveFile, {
+    fileinfo <- parseSavePath(volumes, input$saveFile)
+
+    if (nrow(fileinfo) > 0) {
+      filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_2",".csv")
+      if (!grepl("\\.csv$", filepath)) {
+        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_2",".csv")  # Ensure .csv extension
+      }
+      write.csv(current_data(), filepath, row.names = FALSE)
+      showNotification(paste("File saved to:", filepath), type = "message")
+    }
+  })
   # Register a session end callback to move the log file
   session$onSessionEnded(function() {
     # Define the final log file path

@@ -70,16 +70,17 @@ ui <- fluidPage(
                            ".csv"),
                 width = "120%"),
 
-      selectInput("sample_method", "Sample Method:",
-                  choices = c("Random 10 rows" = "rows10",
-                              "Random 5% of data" = "percent5",
-                              "Random 10% of data" = "percent10",
-                              "All data" = "alldata")),
-      textOutput("sample_info"),
+      actionButton(inputId = "upload_data", label = "Upload Testing Abstracts"),
+      # selectInput("sample_method", "Sample Method:",
+      #             choices = c("Random 10 rows" = "rows10",
+      #                         "Random 5% of data" = "percent5",
+      #                         "Random 10% of data" = "percent10",
+      #                         "All data" = "alldata")),
+      # textOutput("sample_info"),
 
       ### Random button
 
-      actionButton("resample", "Resample Data", class = "btn-primary"),
+     # actionButton("resample", "Resample Data", class = "btn-primary"),
       # Horizontal line
       tags$hr(),
 
@@ -124,88 +125,104 @@ server <- function(input, output, session) {
   #set_logging_session()
 
   current_row <- reactiveVal(1)
-
+  current_data <- reactiveVal()
   #browser()
   # Reactive expression for the data
-  data <- reactive({
+  # data <- reactive({
+  #   req(input$file1)
+  #
+  #   # Read the CSV file
+  #   tryCatch(
+  #     {
+  #       read_csv(input$file1$datapath)
+  #     },
+  #     error = function(e) {
+  #       # Show an error message if file can't be read
+  #       showNotification(paste("Error reading file:", e$message), type = "error")
+  #       return(NULL)
+  #     }
+  #   )
+  # })
+
+  observe({
     req(input$file1)
 
-    # Read the CSV file
-    tryCatch(
-      {
-        read_csv(input$file1$datapath)
-      },
-      error = function(e) {
-        # Show an error message if file can't be read
-        showNotification(paste("Error reading file:", e$message), type = "error")
-        return(NULL)
-      }
-    )
-  })
+    data <- read.csv(input$file1$datapath,
+                     header = input$header)
+    current_data(data)
 
+    updateSelectInput(session, "abstract_col",choices = names(data))
+    updateSelectInput(session, "selected_vars", choices = names(data))
+
+    })
   # Reactive value for the sampled data
-  sampled_data <- reactiveVal()
-
-
-  # Function to sample the data
-  sample_data <- function() {
-    df <- data()
-    if (is.null(df)) return(NULL)
-
-    nrows <- nrow(df)
-
-    if(nrows <10){showNotification(paste("This dataset have less than 10 studies,read all studies in."), type = "message")}
-
-
-    if (input$sample_method == "rows10") {
-      sample_size <- min(10, nrows)
-      sample_method_text <- "10 random rows"
-    }  else if(input$sample_method == "percent5") {
-      sample_size <- max(1, round(nrows * 0.05))
-      sample_method_text <- "5% of data (random)"}
-    else if (input$sample_method == "percent10") {
-      sample_size <- max(1, round(nrows * 0.1))
-      sample_method_text <- "10% of data (random)"
-    } else{
-      sample_size <- max(1, round(nrows * 1))
-      sample_method_text <- "All data"
-    }
-
-    if (nrows > 0) {
-      sampled_indices <- sample(1:nrows, sample_size)
-      sampled <- df[sampled_indices, ]
-
-      # Return both the sampled data and information about the sample
-      list(
-        data = sampled,
-        info = paste("Showing", sample_size, "of", nrows, "rows -", sample_method_text)
-      )
-    } else {
-      list(
-        data = df,
-        info = "No data to sample"
-      )
-    }
-  }
-
-
-  # Update the sampled data when file is uploaded or resample button is clicked
-  observeEvent(list(data(), input$resample), {
-    result <- sample_data()
-    sampled_data(result)
-
-    updateSelectInput(session, "var_manual", choices = grep("_manual$", names(result[[1]]),value = T))
-
-    updateSelectInput(session, "selected_vars", choices = names(result[[1]]))
-  })
+  # sampled_data <- reactiveVal()
+  #
+  #
+  # # Function to sample the data
+  # sample_data <- function() {
+  #   df <- data()
+  #   if (is.null(df)) return(NULL)
+  #
+  #   nrows <- nrow(df)
+  #
+  #   if(nrows <10){showNotification(paste("This dataset have less than 10 studies,read all studies in."), type = "message")}
+  #
+  #
+  #   if (input$sample_method == "rows10") {
+  #     sample_size <- min(10, nrows)
+  #     sample_method_text <- "10 random rows"
+  #   }  else if(input$sample_method == "percent5") {
+  #     sample_size <- max(1, round(nrows * 0.05))
+  #     sample_method_text <- "5% of data (random)"}
+  #   else if (input$sample_method == "percent10") {
+  #     sample_size <- max(1, round(nrows * 0.1))
+  #     sample_method_text <- "10% of data (random)"
+  #   } else{
+  #     sample_size <- max(1, round(nrows * 1))
+  #     sample_method_text <- "All data"
+  #   }
+  #
+  #   if (nrows > 0) {
+  #     sampled_indices <- sample(1:nrows, sample_size)
+  #     sampled <- df[sampled_indices, ]
+  #
+  #     # Return both the sampled data and information about the sample
+  #     list(
+  #       data = sampled,
+  #       info = paste("Showing", sample_size, "of", nrows, "rows -", sample_method_text)
+  #     )
+  #   } else {
+  #     list(
+  #       data = df,
+  #       info = "No data to sample"
+  #     )
+  #   }
+  # }
+  #
 
   # Display selected data
   output$selected_data <- renderDT({
-    req(list(data()), input$selected_vars)
+    req(current_data(), input$selected_vars)
+    df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
+    datatable(df,
+              options = list(dom = 't', # Only show the table, no controls
+                             ordering = FALSE,
+                             scrolly = '800px',
+                             searchHighlight = TRUE),
+              rownames = FALSE)
+  })
 
-    sample_result <- sampled_data()
 
-    df <- sample_result[[1]][current_row(), input$selected_vars, drop = FALSE]
+
+  # Display selected data
+  output$selected_data <- renderDT({
+    req(current_data, input$selected_vars)
+
+   # browser()
+    sample_result <- current_data()
+
+    df <- sample_result[1,][current_row(), input$selected_vars, drop = FALSE]
     datatable(df,
               options = list(dom = 't', # Only show the table, no controls
                              ordering = FALSE,
@@ -216,13 +233,15 @@ server <- function(input, output, session) {
 
   checkman_long <- reactive({
 
-    req(sampled_data(),list(data()))
+    #browser()
 
-    result <- sampled_data()
+    req(current_data)
 
-    col_man <- grep("_manual$", names(result[[1]]))
+    result <- current_data()
 
-    result[[1]][current_row(),col_man,drop = FALSE] |>
+    col_man <- grep("_manual$", names(result[1,]))
+
+    result[current_row(),col_man,drop = FALSE] |>
       pivot_longer(cols = ends_with("_manual"),
                    names_to = "Manual_variable",
                    values_to = "Manual_value",
@@ -244,22 +263,22 @@ server <- function(input, output, session) {
   # Observe edits and update the data
   observeEvent(input$add_manual_var_cell_edit, {
     # browser()
-    req(list(data()))
+    req(current_data,current_row)
     info <- input$add_manual_var_cell_edit
     # str(info)
-    new_data <- sampled_data()
-    new_data[[1]][current_row(), checkman_long()$Manual_variable[info[["row"]]]] <- info$value
-    sampled_data(new_data)
+    new_data <- current_data()
+    new_data[current_row(), checkman_long()$Manual_variable[info[["row"]]]] <- info$value
+    current_data(new_data)
   })
 
 
   # Navigate to next row
   observeEvent(input$next_btn, {
-    req(list(data()))
-    sample_result <- sampled_data()
-    if (!is.null(sample_result) && nrow(sample_result$data) > 0) {
+    req(current_data)
+    sample_result <- current_data()
+    if (!is.null(sample_result) && nrow(sample_result) > 0) {
       curr <- current_row()
-      if (curr < nrow(sample_result$data)) {
+      if (curr < nrow(sample_result)) {
         current_row(curr + 1)
       } else {
         # Wrap around to the first row
@@ -272,15 +291,15 @@ server <- function(input, output, session) {
   # Navigate to previouse row
 
   observeEvent(input$pre_btn, {
-    req(list(data()))
-    sample_result <- sampled_data()
-    if (!is.null(sample_result) && nrow(sample_result$data) > 0) {
+    req(current_data)
+    sample_result <- current_data()
+    if (!is.null(sample_result) && nrow(sample_result) > 0) {
       curr <- current_row()
       if (curr > 1) {
         current_row(curr - 1)
       } else {
         # Wrap around to the last row
-        current_row(nrow(sample_result$data))
+        current_row(nrow(sample_result))
       }
     }
     updateTextInput(session, "new_var_value",value = "")
@@ -289,9 +308,9 @@ server <- function(input, output, session) {
 
   # Display current row indicator
   output$row_indicator <- renderText({
-    sample_result <- sampled_data()
-    if (!is.null(sample_result) && nrow(sample_result$data) > 0) {
-      paste("Row", current_row(), "of", nrow(sample_result$data))
+    sample_result <- current_data()
+    if (!is.null(sample_result) && nrow(sample_result) > 0) {
+      paste("Row", current_row(), "of", nrow(sample_result))
     } else {
       "No data"
     }
@@ -302,6 +321,8 @@ server <- function(input, output, session) {
   shinyFileSave(input, "saveFile", roots = volumes, session = session)
 
   observeEvent(input$saveFile, {
+
+
     fileinfo <- parseSavePath(volumes, input$saveFile)
 
     if (nrow(fileinfo) > 0) {
@@ -309,13 +330,13 @@ server <- function(input, output, session) {
       if (!grepl("\\.csv$", filepath)) {
         filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_1",".csv")  # Ensure .csv extension
       }
-      write.csv(sampled_data(), filepath, row.names = FALSE)
+      write.csv(current_data(), filepath, row.names = FALSE)
       showNotification(paste("File saved to:", filepath), type = "message")
     }
   })
 
   output$sample_info <- renderText({
-    sample_result <- sampled_data()
+    sample_result <- current_data()
     if (!is.null(sample_result)) {
       sample_result$info
     }

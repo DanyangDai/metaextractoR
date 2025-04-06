@@ -120,6 +120,13 @@ ul.task-list li input[type="checkbox"] {
 <li><p>Use <code>@examples</code> to write examples. The examples should be in the examples folder and it is a R script.</p></li>
 </ul>
 </section>
+<section id="quicktime-player---screen-recording-to-gif" class="level2">
+<h2 class="anchored" data-anchor-id="quicktime-player---screen-recording-to-gif">QuickTime Player - screen recording to gif</h2>
+<p>bash code:</p>
+<pre><code>ffmpeg -i input.mov -vf "fps=10,scale=480:-1:flags=lanczos" -c:v png frames/frame%03d.png
+gifski -o output.gif frames/frame*.png
+</code></pre>
+</section>
 
 </main>
 <!-- /main column -->

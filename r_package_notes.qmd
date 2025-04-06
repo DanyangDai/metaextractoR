@@ -70,7 +70,17 @@ Following the guideline recommanded by [R Packages (2e)](https://r-pkgs.org)
 
 - Use `@examples` to write examples. The examples should be in the examples folder and it is a R script. 
 
-- 
+
+## QuickTime Player - screen recording to gif 
+
+bash code: 
+
+```{}
+ffmpeg -i input.mov -vf "fps=10,scale=480:-1:flags=lanczos" -c:v png frames/frame%03d.png
+gifski -o output.gif frames/frame*.png
+
+```
+
 
 
 

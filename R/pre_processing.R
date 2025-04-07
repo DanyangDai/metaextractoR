@@ -32,7 +32,7 @@ add_predefined_vars <- function(abstract_data,list_vars){
 
 
 
-#' @title set_training
+#' @title separate_training
 #'
 #' @description
 #' This function will separate the abstracts into training and testing sets.
@@ -42,16 +42,11 @@ add_predefined_vars <- function(abstract_data,list_vars){
 #' @param percentage percentage of separation training sets.
 #'
 
-separte_training <- function(abstracts, percentage = 0.1){
+separate_training <- function(abstracts, percentage = 0.1,seed = 1111){
 
-  # Set seed for reproducibility (if provided)
-  if (!is.null(seed)) {
-    set.seed(seed)
-  }
+  df <- abstracts
 
   # Read CSV file
-  df <- read.csv(abstracts_path)
-
   # Create a random index for splitting
   sample_size <- floor(nrow(df) * percentage)
   test_indices <- sample(seq_len(nrow(df)), size = sample_size)
@@ -81,9 +76,11 @@ save_training_data <- function(training_abs) {
 
   # check to see if the folder exist or not
 
-  dir.create(metaextroctor_process_data, recursive = TRUE)
+  dir.create("metaextroctor_data", recursive = TRUE)
 
-  file_path <- file.path(process_data, training_stage_0_data)
+  message("Data folder created at: metaextroctor_data")
+
+  file_path <- file.path("metaextroctor_data/training_stage_0_data.csv")
 
   write.csv(training_abs, file = file_path,row.names = F)
 
@@ -102,13 +99,15 @@ save_training_data <- function(training_abs) {
 #' @returns a csv file saved in the metaextroctor_process_data file named training_stage_0_data.csv
 #' @export
 #'
-save_training_data <- function(testing_abs) {
+save_testing_data <- function(testing_abs) {
 
   # check to see if the folder exist or not
 
-  dir.create(metaextroctor_process_data, recursive = TRUE)
+  dir.create("metaextroctor_data", recursive = TRUE)
 
-  file_path <- file.path(process_data, testing_stage_0_data)
+  message("Data folder created at: metaextroctor_data")
+
+  file_path <- file.path("metaextroctor_data/testing_stage_0_data.csv")
 
   write.csv(testing_abs, file = file_path,row.names = F)
 

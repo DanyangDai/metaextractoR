@@ -3,4 +3,5 @@
 export(glance_manual_app)
 export(manual_validation_app)
 export(prompt_engineering_app)
-export(save_stage_1_data)
+export(save_testing_data)
+export(save_training_data)

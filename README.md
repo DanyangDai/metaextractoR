@@ -43,16 +43,83 @@ while keeping a human in the loop for accuracy and oversight.
 
 For documentation: see working paper [working paper]()
 
-### 1. Set up extraction data
+### 1. Getting the abstract information
 
 Once full-text review has been completed, you should have a list of
 articles included for the full-text extraction. At this stage, the user
 should have an csv file that contains a list of abstracts. If you are
 using [Covidence](https://www.covidence.org), the csv file can be
-downloaded from
+downloaded following the steps below:
 
-Based on the pre-defined data extraction element, create variables using
-the `add_predefined_vars` function.
+![](man/figures/export_abs_1.gif)
 
-Once you have created new columns, check the data and make sure that all
-the
+If you are using free reference management software such as
+[Zotero](https://www.zotero.org/), the csv file contains abstracts can
+be exported following the steps below:
+
+![](man/figures/export_abs_2.gif)
+
+You can also use the sample data provided to you using
+`data("abstracts")` to load in a sample abstracts downloaded from
+Covidence.
+
+### 2. Adding new columns to the raw abstract file
+
+Once you have download or exported the csv file containing the
+abstracts, you can read in the csv file to your R environment.
+
+Following your systematic review protocol, we are going to create empty
+columns with pre-defined data extraction elements by using the function:
+`add_predefined_vars`.
+
+Example for using `add_predefined_vars`
+
+``` r
+abstracts_wt_vars <- add_predefined_vars(abstracts, c("no_participants","no_aki","age_mean","age_sd"))
+
+colnames(abstracts_wt_vars)
+```
+
+Before processing to the next step, check the current dataset contains
+all the data items with `_llm` and `_manual`. Most importantly, this
+data must contains abstract column. Use `colnames()` function to check
+the available variables in the dataset.
+
+### 3. Separating training and testing sets
+
+We are going to separate the full abstracts sample into traning and
+testing sets.
+
+The training set will be used in Shinyapp 1 `glance_manual_app()` and
+Shinyapp 2 `prompt_engineering_app()`.
+
+Using function `separate_training()` to divide the full sample into
+training and testing. Follow the example:
+
+``` r
+separate_abs <- separte_training(abstracts_wt_vars, percentage = 0.4)
+```
+
+To make sure that we are consistent with our training set and to avoid
+contamination of the testing set, we will save the training and testing
+abstracts into csv files.
+
+To save the training set: `save_training_data()`. This function will
+create a folder named “metaextractor_data” folder under your current
+working directory. If you could not find your current working directory,
+use `getwd()` to find your current working directory. Follow the example
+to save the training and testing csv files:
+
+``` r
+save_training_data(separate_abs$train)
+
+save_testing_data(separate_abs$test)
+```
+
+Notice that you should have two `.csv` file saved to
+`metaextractor_data` folder, one called: “training_stage_0_data.csv”
+another called: “testing_stage_0_data.csv”. The name of the file has
+been pre-fixed to ensure the correct file goes into the Shinyapps.
+
+This extraction step aims to identify data items that is available in
+the abstract.

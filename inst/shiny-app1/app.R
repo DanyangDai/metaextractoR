@@ -3,7 +3,6 @@ library(shiny)
 library(bslib)
 library(DT)
 library(data.table)
-library(shinyEventLogger)
 library(tidyverse)
 library(shinyFiles)
 

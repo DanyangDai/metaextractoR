@@ -1,0 +1,32 @@
+.checkbox-group {
+  width: 100%;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.checkbox-group label {
+  display: block;
+  margin-bottom: 8px;
+  width: 100%;
+  word-wrap: break-word;
+}
+/* Modify the layout proportions */
+.sidebar {
+  min-width: 500px !important;
+  max-width: 500px !important;
+}
+.main-content {
+  min-width: 0 !important;
+  flex: 1;
+}
+/* Make the data table more compact */
+.dataTables_wrapper {
+  font-size:1em;
+}
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  height: 30px;
+  padding: 2px 8px;
+}

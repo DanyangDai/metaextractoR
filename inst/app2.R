@@ -1,4 +1,3 @@
-
 library(shiny)
 library(bslib)
 library(DT)
@@ -20,6 +19,7 @@ prefixes <- unique(sapply(names(df), get_prefix))
 ui <- fluidPage(
   useShinyjs(),  # Initialize shinyjs
   includeCSS("www/checkbox.css"),
+  includeCSS("www/correct.css"),
 
   page_sidebar(
 
@@ -38,20 +38,17 @@ ui <- fluidPage(
 
       actionButton(inputId = "upload_data", label = "Upload abstracts"),
       # Input: Checkbox if file has header
-      checkboxInput("header", "Header", TRUE,width = "120%"),
+      checkboxInput("header", "Header", TRUE, width = "120%"),
 
       selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE),
 
       card(
         card_header("Use LLM for data extraction"),
         selectInput("var_llm", "Select LLM variable column", choices = NULL),
+        # [TODO] perhaps this should be free text to allow user to chose their own?
+        # The shiny function in the R file can have a default choice.
         selectInput("model_name","Model Name",
-                    choices = c(
-                      "llama3.1:8b" = "llama3.1:8b",
-                      "llama3" = "llama3",
-                      "medllama2" = "medllama2",
-                      "nuextract" ="nuextract"
-                    )),
+                    choices = c("llama3.1:8b", "llama3", "medllama2" = "medllama2", "nuextract")),
         selectInput("extraction_type", "Type of Extraction Element",
                     choices = c(
                       "Integer" = "integer",
@@ -60,18 +57,6 @@ ui <- fluidPage(
                       "Text" = "string"
                     )
 
-        ),
-        tags$head(
-          tags$style(HTML("
-      .correct {
-        background-color: green;
-        color: white;
-      }
-      .incorrect {
-        background-color: red;
-        color: white;
-      }
-    "))
         ),
         textAreaInput("LLM_prompt","Prompt for LLM extraction",height = "100px"),
 

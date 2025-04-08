@@ -18,15 +18,11 @@ RoxygenNote: 7.3.2
 Depends: 
     R (>= 2.10)
 Imports: 
-    tidyverse,
-    dplyr,
     ellmer,
     shiny,
     bslib,
     DT,
-    data.table,
     shinyjs,
-    purrr,
-    readr
-    
-    
+    fs,
+    tidyr,
+    shinyFiles

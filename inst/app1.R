@@ -1,10 +1,8 @@
-
 library(shiny)
 library(bslib)
 library(DT)
-library(data.table)
-library(shinyEventLogger)
-library(tidyverse)
+library(shinyEventLogger) # remove this if possible
+library(tidyr)
 library(shinyFiles)
 
 # UI ----------------------------------------------------------------------

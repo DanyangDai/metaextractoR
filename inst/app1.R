@@ -176,22 +176,6 @@ server <- function(input, output, session) {
 
 
 
-  # Display selected data
-  output$selected_data <- renderDT({
-    req(current_data, input$selected_vars)
-
-   # browser()
-    sample_result <- current_data()
-
-    df <- sample_result[1,][current_row(), input$selected_vars, drop = FALSE]
-    datatable(df,
-              options = list(dom = 't', # Only show the table, no controls
-                             ordering = FALSE,
-                             scrolly = '600px',
-                             searchHighlight = TRUE),
-              rownames = FALSE)
-  })
-
   checkman_long <- reactive({
 
     #browser()

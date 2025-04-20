@@ -48,7 +48,7 @@ ui <- fluidPage(
         # [TODO] perhaps this should be free text to allow user to chose their own?
         # The shiny function in the R file can have a default choice.
         selectInput("model_name","Model Name",
-                    choices = c("llama3.1:8b", "llama3", "medllama2" = "medllama2", "nuextract")),
+                    choices = ellmer:::ollama_models()),
         selectInput("extraction_type", "Type of Extraction Element",
                     choices = c(
                       "Integer" = "integer",
@@ -100,7 +100,7 @@ server <- function(input, output,session) {
   # Don't know how
   temp <- NULL
 
-  log_dir <- "log_files"
+  log_dir <- "./log_files"
 
   temp_log_file <- tempfile(pattern = "user_log_", fileext = ".csv")
 
@@ -233,6 +233,8 @@ server <- function(input, output,session) {
 
     data <- current_data()
 
+    tryCatch({
+
     chat <- chat_ollama(model = input$model_name,
                         seed = 1,
                         api_args = list(temperature = 0))
@@ -241,6 +243,11 @@ server <- function(input, output,session) {
     processed <- map(df[[input$abstract_col]], function(abstract) {
       bot <- chat$clone()
       bot$extract_data(abstract, type = type_abstract)
+    })
+    showNotification("Running Ollama model", type = "message")
+    },
+    error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
     })
 
     data[current,input$var_llm]  <- processed[[1]][[1]]
@@ -300,19 +307,6 @@ server <- function(input, output,session) {
 
 
   #
-  #  # Observe changes in the text input and update the background color
-  #  observe({
-  #    # Compare the user input with the values in Column1 and Column2
-  #
-  # # # #   browser()
-  # # #
-  #    if ( processed[[1]][[1]] ==  data[current_data,input$value_check]) {
-  #      updateTextInput(session, "LLM_prompt", class = "correct")
-  #    } else {
-  #      updateTextInput(session, "LLM_prompt", class = "incorrect")
-  #    }
-  #  })
-  # #
   # Downloadable csv of selected dataset
   volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
 
@@ -337,7 +331,12 @@ server <- function(input, output,session) {
 
     # Move the temporary log file to the final destination
     if (file.exists(temp_log_file)) {
-      file.rename(temp_log_file, final_log_file)
+      if (dir.exists(log_dir))
+      file.copy(temp_log_file, final_log_file)
+      else {
+        dir.create(log_dir)
+        file.copy(temp_log_file, final_log_file)
+      }
     }
   })
 

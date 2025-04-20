@@ -177,7 +177,6 @@ server <- function(input, output, session) {
 
   checkman_long <- reactive({
 
-    #browser()
 
     req(current_data())
 
@@ -185,12 +184,17 @@ server <- function(input, output, session) {
 
     col_man <- grep("_manual$", names(result[1,]))
 
-    result[current_row(),col_man,drop = FALSE] |>
-      pivot_longer(cols = ends_with("_manual"),
-                   names_to = "Manual_variable",
-                   values_to = "Manual_value",
-                   values_transform =list(Value = as.character)) |>
-      arrange(Manual_variable)
+    # browser()
+
+    df <- result[current_row(),col_man,drop = FALSE]
+
+    reshape(df, varying = df[grepl("_manual$",names(result)),] |> names(),
+                   v.name = "Manual_variable",
+                   timevar = "Manual_value",
+                   times = df[grepl("_manual$",names(result)),] |> names(),
+                   direction = "long") |>
+      arrange(Manual_variable) |>
+      select(-id)
 
   })
 

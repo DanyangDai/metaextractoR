@@ -5,14 +5,19 @@ library(shinyEventLogger) # remove this if possible
 library(tidyr)
 library(shinyFiles)
 
+
 # UI ----------------------------------------------------------------------
 
 ui <- fluidPage(
-  includeCSS("www/checkbox.css"),
 
   page_sidebar(
 
     title = "LLM Systematic Review",
+    # Add custom CSS
+    tags$head(
+      tags$style(checkbox_css)
+    ),
+
     sidebar = sidebar(
       width = 500,  # Increased sidebar width
 
@@ -24,7 +29,7 @@ ui <- fluidPage(
                            ".csv"),
                 width = "120%"),
 
-      actionButton(inputId = "upload_data", label = "Upload Testing Abstracts"),
+      # actionButton(inputId = "upload_data", label = "Upload Testing Abstracts"),
       # selectInput("sample_method", "Sample Method:",
       #             choices = c("Random 10 rows" = "rows10",
       #                         "Random 5% of data" = "percent5",
@@ -34,7 +39,7 @@ ui <- fluidPage(
 
       ### Random button
 
-     # actionButton("resample", "Resample Data", class = "btn-primary"),
+      # actionButton("resample", "Resample Data", class = "btn-primary"),
       # Horizontal line
       tags$hr(),
 
@@ -99,23 +104,16 @@ server <- function(input, output, session) {
   # })
 
   observe({
-    req(input$file1, cancelOutput = input$upload_data > 1)
-    #req(input$upload_data)
-    #print(input$upload_data)
+    req(input$file1)
 
-    #if(input$upload_data) {
-    #  data <- metaextractoR::abstracts
-    #} else {
-      data <- read.csv(input$file1$datapath,
-                       header = input$header)
-    #}
-
+    data <- read.csv(input$file1$datapath,
+                     header = input$header)
     current_data(data)
 
     updateSelectInput(session, "abstract_col",choices = names(data))
     updateSelectInput(session, "selected_vars", choices = names(data))
 
-    })
+  })
   # Reactive value for the sampled data
   # sampled_data <- reactiveVal()
   #
@@ -176,11 +174,12 @@ server <- function(input, output, session) {
 
 
 
+
   checkman_long <- reactive({
 
     #browser()
 
-    req(current_data)
+    req(current_data())
 
     result <- current_data()
 
@@ -196,6 +195,7 @@ server <- function(input, output, session) {
   })
 
   output$add_manual_var <- renderDT({
+    req(current_data())
     datatable(checkman_long(),
               editable = TRUE,
               options = list(dom = 't', # Only show the table, no controls

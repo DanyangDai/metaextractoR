@@ -69,7 +69,7 @@ ui <- fluidPage(
                            ".csv"),
                 width = "120%"),
 
-      actionButton(inputId = "upload_data", label = "Upload Testing Abstracts"),
+     # actionButton(inputId = "upload_data", label = "Upload Testing Abstracts"),
       # selectInput("sample_method", "Sample Method:",
       #             choices = c("Random 10 rows" = "rows10",
       #                         "Random 5% of data" = "percent5",

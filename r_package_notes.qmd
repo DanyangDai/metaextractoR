@@ -82,6 +82,9 @@ gifski -o output.gif frames/frame*.png
 ```
 
 
+## Before submitting to CRAN 
+
+- Run `devtools::check()` to check the package. 
 
 
 

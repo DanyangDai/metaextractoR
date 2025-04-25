@@ -121,5 +121,7 @@ Notice that you should have two `.csv` file saved to
 another called: “testing_stage_0_data.csv”. The name of the file has
 been pre-fixed to ensure the correct file goes into the Shinyapps.
 
+### 4. Identify varaible that is avaiable for extraction
+
 This extraction step aims to identify data items that is available in
 the abstract.

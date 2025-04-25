@@ -107,9 +107,12 @@ save_testing_data(separate_abs$test)
 Notice that you should have two `.csv` file saved to `metaextractor_data` folder, one called: "training_stage_0_data.csv" another called: "testing_stage_0_data.csv". The name of the file has been pre-fixed to ensure the correct file goes into the Shinyapps. 
 
 
-### 3. Identify varaible that is avaiable for extraction
+### 4. Identify varaible that is avaiable for extraction
 
 This extraction step aims to identify data items that is available in the abstract. 
+
+To call up the Shinyapp, use function `glance_manual_app()`.
+
 
 
 

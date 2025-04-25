@@ -42,7 +42,7 @@ add_predefined_vars <- function(abstract_data,list_vars){
 #' @param percentage percentage of separation training sets.
 #'
 
-separate_training <- function(abstracts, percentage = 0.1,seed = 1111){
+separate_training <- function(abstracts, percentage = 0.1){
 
   df <- abstracts
 

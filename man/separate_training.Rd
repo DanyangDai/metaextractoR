@@ -4,7 +4,7 @@
 \alias{separate_training}
 \title{separate_training}
 \usage{
-separate_training(abstracts, percentage = 0.1, seed = 1111)
+separate_training(abstracts, percentage = 0.1)
 }
 \arguments{
 \item{abstracts}{The csv file contains abstracts with}

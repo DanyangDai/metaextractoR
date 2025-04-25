@@ -10,7 +10,9 @@ manual_validation_app()
 A shinyapp that manually check the LLM outputs
 }
 \examples{
-\donotrun {
-prompt_engineering()
+
+\donttest {
+manual_validation_app()
 }
+
 }

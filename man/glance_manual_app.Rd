@@ -2,7 +2,7 @@
 % Please edit documentation in R/glance_manual_app.R
 \name{glance_manual_app}
 \alias{glance_manual_app}
-\title{Launch the first shinyapp for to look into what variables are avaiable in the abstract.}
+\title{Launch the first shinyapp for to look into what variables are available in the abstract.}
 \usage{
 glance_manual_app()
 }
@@ -10,5 +10,5 @@ glance_manual_app()
 Shiny app.
 }
 \description{
-This function calls a shinyapp that display the abstract and allow for randomly reading in data to glace what are the avaiable information in abstract.
+This function calls a shinyapp that display the abstract and allow for randomly reading in data to glace what are the available information in abstract.
 }

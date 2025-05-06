@@ -14,9 +14,7 @@ ui <- fluidPage(
 
     title = "LLM Systematic Review",
     # Add custom CSS
-    tags$head(
-      tags$style(checkbox_css)
-    ),
+    includeCSS("www/checkbox.css"),
 
     sidebar = sidebar(
       width = 500,  # Increased sidebar width

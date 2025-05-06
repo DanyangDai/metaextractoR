@@ -3,6 +3,7 @@ library(bslib)
 library(DT)
 library(shinyEventLogger) # remove this if possible
 library(tidyr)
+library(dplyr)
 library(shinyFiles)
 
 

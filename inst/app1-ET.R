@@ -15,8 +15,7 @@ sidebar <- sidebar(
             multiple = FALSE,
             accept = c("text/csv",
                        "text/comma-separated-values,text/plain",
-                       ".csv"),
-            width = "120%"),
+                       ".csv")),
   actionButton("example", "Use example"),
   selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE),
 )
@@ -24,7 +23,9 @@ sidebar <- sidebar(
 main <- mainPanel(
   h3("Data Preview"),
   div(style = "height: 600px; overflow-y: auto;",
-      DTOutput("selected_data"))
+      DTOutput("selected_data")),
+  textOutput("row_indicator"),
+  width = 12
 )
 
 
@@ -86,6 +87,17 @@ server <- function(input, output, session) {
                              scrolly = '800px',
                              searchHighlight = TRUE),
               rownames = FALSE)
+  })
+
+
+  # display row indicator ---------------------------------------------------
+  output$row_indicator <- renderText({
+    sample_result <- current_data()
+    if (!is.null(sample_result) && nrow(sample_result) > 0) {
+      paste("Row", current_row(), "of", nrow(sample_result))
+    } else {
+      "No data"
+    }
   })
 
 }

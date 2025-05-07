@@ -22,8 +22,13 @@ sidebar <- sidebar(
 )
 
 main <- mainPanel(
-
+  h3("Data Preview"),
+  div(style = "height: 600px; overflow-y: auto;",
+      DTOutput("selected_data"))
 )
+
+
+# UI ----------------------------------------------------------------------
 
 ui <- page_sidebar(
   title = "LLM Systematic Review",
@@ -31,11 +36,17 @@ ui <- page_sidebar(
   main
 )
 
+
+# Server ------------------------------------------------------------------
+
 server <- function(input, output, session) {
 
+  current_row <- reactiveVal(1)
   current_data <- reactiveVal(NULL)
   data_info <- reactiveVal("Data Status 🟡 No dataset available.")
 
+
+  # upload file -------------------------------------------------------------
   observeEvent(input$file, {
     this_data <- readr::read_csv(input$file$datapath)
     info_string <- glue::glue("Data Status 🟢 Using uploaded data.")
@@ -43,24 +54,44 @@ server <- function(input, output, session) {
     current_data(this_data)
   })
 
+
+  # use example data --------------------------------------------------------
   observeEvent(input$example, {
     this_data <- readRDS("abstracts.rds")
     data_info("Data Status 🟢 Using example.")
     current_data(this_data)
   })
 
+
+  # show data status --------------------------------------------------------
   output$data_status <- renderUI({
     data_info()
   })
 
+
+  # select data columns -----------------------------------------------------
   observe({
     updateSelectInput(session, "abstract_col", choices = names(current_data()))
     updateSelectInput(session, "selected_vars", choices = names(current_data()))
+  })
 
+
+  # display selected data ---------------------------------------------------
+  output$selected_data <- renderDT({
+    req(current_data(), input$selected_vars)
+    df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
+    datatable(df,
+              options = list(dom = 't', # Only show the table, no controls
+                             ordering = FALSE,
+                             scrolly = '800px',
+                             searchHighlight = TRUE),
+              rownames = FALSE)
   })
 
 }
 
 
-# Run the app
+
+# Run app -----------------------------------------------------------------
+
 shinyApp(ui = ui, server = server)

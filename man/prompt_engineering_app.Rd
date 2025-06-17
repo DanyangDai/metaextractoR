@@ -11,7 +11,7 @@ A shinyapp that designed for model testing and prompt engineering.
 }
 \examples{
 
-\donttest {
+\donttest{
 prompt_engineering_app()
 }
 

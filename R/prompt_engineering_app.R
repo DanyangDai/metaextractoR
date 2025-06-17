@@ -6,7 +6,7 @@
 #'
 #' @examples
 #'
-#' \donttest {
+#' \donttest{
 #' prompt_engineering_app()
 #' }
 #'

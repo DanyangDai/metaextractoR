@@ -6,7 +6,7 @@
 #'
 #' @examples
 #'
-#' \donttest{
+#' \dontrun{
 #' manual_validation_app()
 #' }
 #'

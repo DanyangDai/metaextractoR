@@ -23,10 +23,12 @@ Imports:
     bslib,
     DT,
     shinyjs,
-    fs,
     tidyr,
     shinyFiles,
-    cli
+    cli,
+    vctrs,
+    dplyr,
+    purrr,
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

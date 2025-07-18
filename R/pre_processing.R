@@ -6,16 +6,16 @@
 #'
 #' @rdname add_predefined_vars
 #'
-#' @param abstract_data a csv file contains abstract information. This could be the csv file downloaded from covidence
+#' @param data a csv file contains abstract information. This could be the csv file downloaded from covidence
 #'
 #' @param list_vars a vector of data elements you want to extract. i.e. c("no_participants,"no_female","..")
 #'
 #' @return new dataset with additional empty columns
 #'
 
-add_predefined_vars <- function(abstract_data,list_vars){
+add_predefined_vars <- function(data,list_vars){
 
-  if (is.null(abstract_data)){
+  if (is.null(data)){
     warning("Please check that you have supplied a valid dataset")
   }
   else if (is.null(list_vars)) {
@@ -24,9 +24,9 @@ add_predefined_vars <- function(abstract_data,list_vars){
   else{
   new_col_names <- c(paste0(list_vars, "_manual"), paste0(list_vars, "_llm"))
 
-  abstract_data[new_col_names] <- NA
+  data[new_col_names] <- NA
 
-  return(abstract_data)}
+  return(data)}
 
 }
 
@@ -37,23 +37,22 @@ add_predefined_vars <- function(abstract_data,list_vars){
 #' @description
 #' This function will separate the abstracts into training and testing sets.
 #'
-#' @param abstracts The csv file contains abstracts with
+#' @param data The csv file contains abstracts with
 #'
 #' @param percentage percentage of separation training sets.
 #'
 
-separate_training <- function(abstracts, percentage = 0.1){
+separate_training <- function(data, percentage = 0.1){
 
-  df <- abstracts
 
   # Read CSV file
   # Create a random index for splitting
-  sample_size <- floor(nrow(df) * percentage)
-  test_indices <- sample(seq_len(nrow(df)), size = sample_size)
+  sample_size <- floor(nrow(data) * percentage)
+  test_indices <- sample(seq_len(nrow(data)), size = sample_size)
 
   # Split data into training and testing sets
-  test_df <- df[test_indices, ]
-  train_df <- df[-test_indices, ]
+  test_df <- data[test_indices, ]
+  train_df <- data[-test_indices, ]
 
   return(list(train = train_df, test = test_df))
 
@@ -67,6 +66,8 @@ separate_training <- function(abstracts, percentage = 0.1){
 #'The data will be stored in metaextroctor_process_data
 #'
 #' @param training_abs training abstracts including the variables you want to extract.
+#'
+#' @importFrom utils write.csv
 #'
 #' @returns a csv file saved in the metaextroctor_process_data file named training_stage_0_data.csv
 #' @export

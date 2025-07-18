@@ -4,10 +4,10 @@
 \alias{separate_training}
 \title{separate_training}
 \usage{
-separate_training(abstracts, percentage = 0.1)
+separate_training(data, percentage = 0.1)
 }
 \arguments{
-\item{abstracts}{The csv file contains abstracts with}
+\item{data}{The csv file contains abstracts with}
 
 \item{percentage}{percentage of separation training sets.}
 }

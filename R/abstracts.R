@@ -8,6 +8,19 @@
 #'   \item{title}{Title of the manuscript}
 #'   \item{authors}{Authors}
 #'   \item{abstract}{The column that contains all abstracts}
+#'   \item{published_year}{Year of the publication}
+#'   \item{published_month}{Month of the publication}
+#'   \item{journal}{Journal's name}
+#'   \item{volume}{Volume number}
+#'   \item{issue}{Issue number}
+#'   \item{pages}{Page number}
+#'   \item{accession_number}{Accession number}
+#'   \item{doi}{doi number}
+#'   \item{ref}{Reference}
+#'   \item{covidence_number}{Covidence number}
+#'   \item{study}{Study}
+#'   \item{notes}{Notes}
+#'   \item{tags}{Tags}
 #' }
 #' @source Created for demonstration purposes
 "abstracts"

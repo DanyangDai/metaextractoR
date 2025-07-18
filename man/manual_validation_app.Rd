@@ -11,7 +11,7 @@ A shinyapp that manually check the LLM outputs
 }
 \examples{
 
-\donttest{
+\dontrun{
 manual_validation_app()
 }
 

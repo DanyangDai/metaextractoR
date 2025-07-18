@@ -4,10 +4,10 @@
 \alias{add_predefined_vars}
 \title{Pre-processing functions before shinyapps}
 \usage{
-add_predefined_vars(abstract_data, list_vars)
+add_predefined_vars(data, list_vars)
 }
 \arguments{
-\item{abstract_data}{a csv file contains abstract information. This could be the csv file downloaded from covidence}
+\item{data}{a csv file contains abstract information. This could be the csv file downloaded from covidence}
 
 \item{list_vars}{a vector of data elements you want to extract. i.e. c("no_participants,"no_female","..")}
 }

@@ -48,71 +48,95 @@ checkbox_css <- HTML("
 
 # UI ----------------------------------------------------------------------
 
-ui <- fluidPage(
 
-  page_sidebar(
-
-    title = "LLM Systematic Review",
-    # Add custom CSS
-    tags$head(
-      tags$style(checkbox_css)
-    ),
-
-    sidebar = sidebar(
-      width = 500,  # Increased sidebar width
-
-      # Input: Select a file
-      fileInput("file1", "Choose CSV File",
-                multiple = FALSE,
-                accept = c("text/csv",
-                           "text/comma-separated-values,text/plain",
-                           ".csv"),
-                width = "120%"),
-
-     # actionButton(inputId = "upload_data", label = "Upload Testing Abstracts"),
-      # selectInput("sample_method", "Sample Method:",
-      #             choices = c("Random 10 rows" = "rows10",
-      #                         "Random 5% of data" = "percent5",
-      #                         "Random 10% of data" = "percent10",
-      #                         "All data" = "alldata")),
-      # textOutput("sample_info"),
-
-      ### Random button
-
-     # actionButton("resample", "Resample Data", class = "btn-primary"),
-      # Horizontal line
-      tags$hr(),
-
-      # Input: Checkbox if file has header
-      checkboxInput("header", "Header", TRUE,width = "120%"),
-
-      selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE),
-      # Add new variable section
-      tags$hr()),
-
-
-
-    # Main panel with data table output and edit interface
-    mainPanel(
-      width = 1500,
-      h3("Data Preview"),
-      div(style = "height: 600px; overflow-y: auto;",
-          DTOutput("selected_data")),
-      textOutput("row_indicator"),
-      # textOutput("output_newvar_name"),
-      # textOutput("output_newvar_value"),
-      card(
-        card_header("Manual Extraction"),
-        DTOutput("add_manual_var")
-      )),
-
-    fluidRow(
-      column(12,align = "left", actionButton("pre_btn","Previous")),
-      column(12,align = "right", actionButton("next_btn","Next"))
-    ),
-    # Input: Variable selection
-    # Download Button
+ui <- page_sidebar(
+  title = tagList(icon("flask"), "LLM Systematic Review"),
+  theme = bs_theme(
+    version = 5,
+    bootswatch = "flatly",
+    base_font = font_google("Inter"),
+    heading_font = font_google("Inter"),
+    primary = "#2C7BE5"
+  ),
+  head_content = tags$head(
+    includeCSS("inst/www/checkbox.css"),
+    tags$link(rel = "icon", type = "image/png", href = "www/favicon.png"),
+    tags$style(HTML("
+ .sidebar {
+ padding-top: 0.75rem;
+ }
+ .form-label { font-weight: 600; }
+ .help-text { color: #6c757d; font-size: 0.9rem; }
+ .card-header {
+ font-weight: 700;
+ background: #f8f9fa;
+ }
+ .muted {
+ color: #6c757d;
+ font-size: 0.9rem;
+ }
+ .sticky-actions {
+ position: sticky;
+ bottom: 0;
+ z-index: 1000;
+ background: rgba(255,255,255,0.95);
+ backdrop-filter: saturate(180%) blur(6px);
+ border-top: 1px solid #e9ecef;
+ padding: 0.75rem 0;
+ }
+ .data-height {
+ height: 60vh; /* responsive table height */
+ overflow: auto;
+ }
+ .btn-outline-secondary {
+ border-color: #ced4da;
+ }
+ "))
+  ),
+  sidebar = sidebar(
+    width = 360,
+    h5(class = "mt-2 mb-2", "Upload your CSV"), fileInput( "file1", label = NULL, multiple = FALSE, accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"), buttonLabel = "Browse...", placeholder = "No file selected" ), div(class = "help-text mb-3", "CSV should contain your abstracts and any other relevant fields." ),  tags$hr(),  h6(class = "mt-2 mb-1", "Options"), checkboxInput("header", "CSV has a header row", TRUE),  selectizeInput( "selected_vars", "Columns to display", choices = NULL, multiple = TRUE, options = list(placeholder = "Start typing to choose columns...") ),  tags$hr(class = "mb-3")
+  ),
+  div(
+    class = "d-flex justify-content-end mb-3",
     shinySaveButton("saveFile", "Save CSV", "Save as...")
+  ),
+  card(
+    card_header(
+      div(class = "d-flex justify-content-between align-items-center w-100",
+          div("Data Preview"),
+          div(textOutput("row_indicator", inline = TRUE), class = "muted")
+      )
+    ),
+    div(class = "data-height",
+        DTOutput("selected_data")
+    )
+  ),
+  card(
+    class = "mt-3",
+    card_header("Manual Extraction"),
+    DTOutput("add_manual_var")
+  ),
+  div(
+    class = "sticky-actions mt-3",
+    fluidRow(
+      column(
+        width = 6,
+        div(
+          class = "d-grid",
+          actionButton("pre_btn", label = tagList(icon("arrow-left"), "Previous"),
+                       class = "btn btn-outline-secondary")
+        )
+      ),
+      column(
+        width = 6,
+        div(
+          class = "d-grid",
+          actionButton("next_btn", label = tagList("Next", icon("arrow-right")),
+                       class = "btn btn-primary")
+        )
+      )
+    )
   )
 )
 

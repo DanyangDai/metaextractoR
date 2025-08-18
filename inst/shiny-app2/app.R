@@ -9,43 +9,6 @@ library(shinyFiles)
 
 
 
-# CSS ----------------------------------------------------------------------
-
-checkbox_css <- HTML("
-  .checkbox-group {
-    width: 100%;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 4px;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  .checkbox-group label {
-    display: block;
-    margin-bottom: 8px;
-    width: 100%;
-    word-wrap: break-word;
-  }
-  /* Modify the layout proportions */
-  .sidebar {
-    min-width: 500px !important;
-    max-width: 500px !important;
-  }
-  .main-content {
-    min-width: 0 !important;
-    flex: 1;
-  }
-  /* Make the data table more compact */
-  .dataTables_wrapper {
-    font-size: 0.9em;
-  }
-  .dataTables_wrapper .dataTables_filter input,
-  .dataTables_wrapper .dataTables_length select {
-    height: 30px;
-    padding: 2px 8px;
-  }
-")
-
 # Extract unique prefixes
 get_prefix <- function(name) {
   sub("_.*", "", name)
@@ -54,79 +17,37 @@ prefixes <- unique(sapply(names(df), get_prefix))
 
 
 # UI ----------------------------------------------------------------------
-
 ui <- fluidPage(
-  useShinyjs(),  # Initialize shinyjs
-
-
+  useShinyjs(),
+  includeCSS("inst/www/checkbox.css"),
+  includeCSS("inst/www/correct.css"),
   page_sidebar(
-
     title = "Prompt Engineering",
-    # Add custom CSS
-    tags$head(
-      tags$style(checkbox_css)
-    ),
-
-    sidebar = sidebar(
-      width = 500,  # Increased sidebar width
-
-      # Input: Select a file
-      fileInput("file1", "Choose CSV File",
-                multiple = FALSE,
-                accept = c("text/csv",
-                           "text/comma-separated-values,text/plain",
-                           ".csv"),
-                width = "120%"),
-
-      actionButton(inputId = "upload_data", label = "Upload abstracts"),
-      # Input: Checkbox if file has header
-      checkboxInput("header", "Header", TRUE,width = "120%"),
-
-      selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE),
-
+    theme = bslib::bs_theme(bootswatch = "flatly"),
+    sidebar = bslib::sidebar(
+      width = 500,  h5("Upload data"),
+      fileInput( "file1", "Choose CSV File",
+      multiple = FALSE, accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"), width = "100%" ),
+      checkboxInput("header", "Header", TRUE),
+      actionButton("upload_data", "Upload abstracts", class = "btn-primary", width = "100%"),
+      hr(), h5("Select columns"),
+      selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE, width = "100%"),
       card(
-        card_header("Use LLM for data extraction"),
-        selectInput("var_llm", "Select LLM variable column", choices = NULL),
-        selectInput("model_name","Model Name",
-                    choices = c(
-                      "llama3.1:8b" = "llama3.1:8b",
-                      "llama3" = "llama3",
-                      "medllama2" = "medllama2",
-                      "nuextract" ="nuextract"
-                    )),
-        selectInput("extraction_type", "Type of Extraction Element",
-                    choices = c(
-                      "Integer" = "integer",
-                      "Double" = "number",
-                      "Binary" = "boolean",
-                      "Text" = "string"
-                    )
-
-        ),
-        tags$head(
-          tags$style(HTML("
-      .correct {
-        background-color: green;
-        color: white;
-      }
-      .incorrect {
-        background-color: red;
-        color: white;
-      }
-    "))
-        ),
-        textAreaInput("LLM_prompt","Prompt for LLM extraction",height = "100px"),
-
-        selectInput("abstract_col", "Select Abstract column", choices = NULL),
-
-        textOutput("variable_check"),
-
-        textOutput("check_value"),
-
-        textOutput("equalCheck"),
-
-        actionButton("useLLM", "Create LLM Variable")
-      )),
+        header = card_header(icon("wand-magic-sparkles"),"Use LLM for data extraction"),
+        selectInput("var_llm", "Select LLM variable column", choices = NULL, width = "100%"),
+        selectInput("model_name", "Model Name", choices = ellmer:::ollama_models(), width = "100%"),
+        selectInput( "extraction_type", "Type of Extraction Element", choices = c("Integer" = "integer", "Double" = "number", "Binary" = "boolean", "Text" = "string"), width = "100%" ),
+      textAreaInput( "LLM_prompt", "Prompt for LLM extraction", height = "100px", placeholder = "Describe exactly what to extract, expected format, and constraints." ),
+      selectInput("abstract_col", "Select Abstract column", choices = NULL, width = "100%"),
+                   card_footer( actionButton("useLLM", "Create LLM Variable", class = "btn-success", width = "100%",icon = icon("robot") ) ) ),
+      card(
+        class = "sidebar-card",
+        card_header(icon("check-circle"), "Validation"),
+        div(style = "min-height: 1.5em;", textOutput("variable_check")),
+        div(style = "min-height: 1.5em;", textOutput("check_value")),
+        div(style = "min-height: 1.5em;", textOutput("equalCheck"))
+      )
+    ),
 
 
     # Main panel with data table output and edit interface
@@ -145,8 +66,8 @@ ui <- fluidPage(
       shinySaveButton("saveFile", "Save CSV", "Save as...")
 
     ),
-
   ))
+
 
 # SERVER ------------------------------------------------------------------
 

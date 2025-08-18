@@ -9,69 +9,94 @@ library(shinyFiles)
 
 # UI ----------------------------------------------------------------------
 
-ui <- fluidPage(
-
-  page_sidebar(
-
-    title = "LLM Systematic Review",
-    # Add custom CSS
-    includeCSS("www/checkbox.css"),
-
-    sidebar = sidebar(
-      width = 500,  # Increased sidebar width
-
-      # Input: Select a file
-      fileInput("file1", "Choose CSV File",
-                multiple = FALSE,
-                accept = c("text/csv",
-                           "text/comma-separated-values,text/plain",
-                           ".csv"),
-                width = "120%"),
-
-      # actionButton(inputId = "upload_data", label = "Upload Testing Abstracts"),
-      # selectInput("sample_method", "Sample Method:",
-      #             choices = c("Random 10 rows" = "rows10",
-      #                         "Random 5% of data" = "percent5",
-      #                         "Random 10% of data" = "percent10",
-      #                         "All data" = "alldata")),
-      # textOutput("sample_info"),
-
-      ### Random button
-
-      # actionButton("resample", "Resample Data", class = "btn-primary"),
-      # Horizontal line
-      tags$hr(),
-
-      # Input: Checkbox if file has header
-      checkboxInput("header", "Header", TRUE,width = "120%"),
-
-      selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE),
-      # Add new variable section
-      tags$hr()),
-
-
-
-    # Main panel with data table output and edit interface
-    mainPanel(
-      width = 1500,
-      h3("Data Preview"),
-      div(style = "height: 600px; overflow-y: auto;",
-          DTOutput("selected_data")),
-      textOutput("row_indicator"),
-      # textOutput("output_newvar_name"),
-      # textOutput("output_newvar_value"),
-      card(
-        card_header("Manual Extraction"),
-        DTOutput("add_manual_var")
-      )),
-
-    fluidRow(
-      column(12,align = "left", actionButton("pre_btn","Previous")),
-      column(12,align = "right", actionButton("next_btn","Next"))
-    ),
-    # Input: Variable selection
-    # Download Button
+ui <- page_sidebar(
+  title = tagList(icon("flask"), "LLM Systematic Review"),
+  theme = bs_theme(
+    version = 5,
+    bootswatch = "flatly",
+    base_font = font_google("Inter"),
+    heading_font = font_google("Inter"),
+    primary = "#2C7BE5"
+  ),
+  head_content = tags$head(
+    includeCSS("inst/www/checkbox.css"),
+    tags$link(rel = "icon", type = "image/png", href = "www/favicon.png"),
+    tags$style(HTML("
+ .sidebar {
+ padding-top: 0.75rem;
+ }
+ .form-label { font-weight: 600; }
+ .help-text { color: #6c757d; font-size: 0.9rem; }
+ .card-header {
+ font-weight: 700;
+ background: #f8f9fa;
+ }
+ .muted {
+ color: #6c757d;
+ font-size: 0.9rem;
+ }
+ .sticky-actions {
+ position: sticky;
+ bottom: 0;
+ z-index: 1000;
+ background: rgba(255,255,255,0.95);
+ backdrop-filter: saturate(180%) blur(6px);
+ border-top: 1px solid #e9ecef;
+ padding: 0.75rem 0;
+ }
+ .data-height {
+ height: 60vh; /* responsive table height */
+ overflow: auto;
+ }
+ .btn-outline-secondary {
+ border-color: #ced4da;
+ }
+ "))
+  ),
+  sidebar = sidebar(
+    width = 360,
+    h5(class = "mt-2 mb-2", "Upload your CSV"), fileInput( "file1", label = NULL, multiple = FALSE, accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"), buttonLabel = "Browse...", placeholder = "No file selected" ), div(class = "help-text mb-3", "CSV should contain your abstracts and any other relevant fields." ),  tags$hr(),  h6(class = "mt-2 mb-1", "Options"), checkboxInput("header", "CSV has a header row", TRUE),  selectizeInput( "selected_vars", "Columns to display", choices = NULL, multiple = TRUE, options = list(placeholder = "Start typing to choose columns...") ),  tags$hr(class = "mb-3")
+  ),
+  div(
+    class = "d-flex justify-content-end mb-3",
     shinySaveButton("saveFile", "Save CSV", "Save as...")
+  ),
+  card(
+    card_header(
+      div(class = "d-flex justify-content-between align-items-center w-100",
+          div("Data Preview"),
+          div(textOutput("row_indicator", inline = TRUE), class = "muted")
+      )
+    ),
+    div(class = "data-height",
+        DTOutput("selected_data")
+    )
+  ),
+  card(
+    class = "mt-3",
+    card_header("Manual Extraction"),
+    DTOutput("add_manual_var")
+  ),
+  div(
+    class = "sticky-actions mt-3",
+    fluidRow(
+      column(
+        width = 6,
+        div(
+          class = "d-grid",
+          actionButton("pre_btn", label = tagList(icon("arrow-left"), "Previous"),
+                       class = "btn btn-outline-secondary")
+        )
+      ),
+      column(
+        width = 6,
+        div(
+          class = "d-grid",
+          actionButton("next_btn", label = tagList("Next", icon("arrow-right")),
+                       class = "btn btn-primary")
+        )
+      )
+    )
   )
 )
 
@@ -85,22 +110,7 @@ server <- function(input, output, session) {
   current_row <- reactiveVal(1)
   current_data <- reactiveVal()
   #browser()
-  # Reactive expression for the data
-  # data <- reactive({
-  #   req(input$file1)
-  #
-  #   # Read the CSV file
-  #   tryCatch(
-  #     {
-  #       read_csv(input$file1$datapath)
-  #     },
-  #     error = function(e) {
-  #       # Show an error message if file can't be read
-  #       showNotification(paste("Error reading file:", e$message), type = "error")
-  #       return(NULL)
-  #     }
-  #   )
-  # })
+
 
   observe({
     req(input$file1)
@@ -113,51 +123,7 @@ server <- function(input, output, session) {
     updateSelectInput(session, "selected_vars", choices = names(data))
 
   })
-  # Reactive value for the sampled data
-  # sampled_data <- reactiveVal()
-  #
-  #
-  # # Function to sample the data
-  # sample_data <- function() {
-  #   df <- data()
-  #   if (is.null(df)) return(NULL)
-  #
-  #   nrows <- nrow(df)
-  #
-  #   if(nrows <10){showNotification(paste("This dataset have less than 10 studies,read all studies in."), type = "message")}
-  #
-  #
-  #   if (input$sample_method == "rows10") {
-  #     sample_size <- min(10, nrows)
-  #     sample_method_text <- "10 random rows"
-  #   }  else if(input$sample_method == "percent5") {
-  #     sample_size <- max(1, round(nrows * 0.05))
-  #     sample_method_text <- "5% of data (random)"}
-  #   else if (input$sample_method == "percent10") {
-  #     sample_size <- max(1, round(nrows * 0.1))
-  #     sample_method_text <- "10% of data (random)"
-  #   } else{
-  #     sample_size <- max(1, round(nrows * 1))
-  #     sample_method_text <- "All data"
-  #   }
-  #
-  #   if (nrows > 0) {
-  #     sampled_indices <- sample(1:nrows, sample_size)
-  #     sampled <- df[sampled_indices, ]
-  #
-  #     # Return both the sampled data and information about the sample
-  #     list(
-  #       data = sampled,
-  #       info = paste("Showing", sample_size, "of", nrows, "rows -", sample_method_text)
-  #     )
-  #   } else {
-  #     list(
-  #       data = df,
-  #       info = "No data to sample"
-  #     )
-  #   }
-  # }
-  #
+
 
   # Display selected data
   output$selected_data <- renderDT({
@@ -188,14 +154,16 @@ server <- function(input, output, session) {
     df <- result[current_row(),col_man,drop = FALSE]
 
     reshape(df, varying = df[grepl("_manual$",names(result)),] |> names(),
-                   v.name = "Manual_variable",
-                   timevar = "Manual_value",
-                   times = df[grepl("_manual$",names(result)),] |> names(),
-                   direction = "long") |>
+            v.name = "Manual_variable",
+            timevar = "Manual_value",
+            times = df[grepl("_manual$",names(result)),] |> names(),
+            direction = "long") |>
       arrange(Manual_variable) |>
       select(-id)
 
   })
+
+
 
   output$add_manual_var <- renderDT({
     req(current_data())
@@ -208,21 +176,44 @@ server <- function(input, output, session) {
               rownames = FALSE)
   })
 
+
+
+
   # Observe edits and update the data
+
   observeEvent(input$add_manual_var_cell_edit, {
-    # browser()
-    req(current_data,current_row)
     info <- input$add_manual_var_cell_edit
-    # str(info)
-    new_data <- current_data()
-    new_data[current_row(), checkman_long()$Manual_variable[info[["row"]]]] <- info$value
-    current_data(new_data)
+    if (is.null(info) || is.null(info$row)) return()
+    vals <- current_data()
+    if (is.null(vals)) return()
+    cur <- current_row() %||% 1L
+    if (cur < 1 || cur > nrow(vals)) return()
+    long_df <- isolate(checkman_long())
+    if (nrow(long_df) == 0) return()
+    col_name <- long_df$Manual_variable[info$row]
+    if (is.na(col_name) || !(col_name %in% names(vals))) return()
+
+    old_val <- vals[cur, col_name, drop = TRUE]
+    new_val <- tryCatch(DT::coerceValue(info$value, old_val), error = function(e) info$value)
+    vals[cur, col_name] <- new_val
+    current_data(vals)
   })
+
+  #
+  # observeEvent(input$add_manual_var_cell_edit, {
+  #   # browser()
+  #   req(current_data(),current_row())
+  #   info <- input$add_manual_var_cell_edit
+  #   # str(info)
+  #   new_data <- current_data()
+  #   new_data[current_row(), checkman_long()$Manual_variable[info[["row"]]]] <- info$value
+  #   current_data(new_data)
+  # })
 
 
   # Navigate to next row
   observeEvent(input$next_btn, {
-    req(current_data)
+    req(current_data())
     sample_result <- current_data()
     if (!is.null(sample_result) && nrow(sample_result) > 0) {
       curr <- current_row()

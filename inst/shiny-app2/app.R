@@ -16,8 +16,27 @@ get_prefix <- function(name) {
 prefixes <- unique(sapply(names(df), get_prefix))
 
 
+# check functions
+
+ollama_installed <- function() {
+  nzchar(Sys.which("ollama"))
+}
+
+ollama_running <- function() {
+  con <- try(socketConnection(host = "localhost", port = 11434,
+                              open = "r+", blocking = TRUE,
+                              timeout = 1), silent = TRUE)
+  if (inherits(con, "try-error")) {
+    return(FALSE)
+  } else {
+    close(con)
+    return(TRUE)
+  }
+}
+
 # UI ----------------------------------------------------------------------
 ui <- fluidPage(
+  uiOutput("ollama_warning"),
   useShinyjs(),
   includeCSS("inst/www/checkbox.css"),
   includeCSS("inst/www/correct.css"),
@@ -30,16 +49,22 @@ ui <- fluidPage(
       multiple = FALSE, accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"), width = "100%" ),
       checkboxInput("header", "Header", TRUE),
       actionButton("upload_data", "Upload abstracts", class = "btn-primary", width = "100%"),
-      hr(), h5("Select columns"),
+      hr(),
+
+      h5("Select columns"),
       selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE, width = "100%"),
+
       card(
         header = card_header(icon("wand-magic-sparkles"),"Use LLM for data extraction"),
         selectInput("var_llm", "Select LLM variable column", choices = NULL, width = "100%"),
         selectInput("model_name", "Model Name", choices = ellmer:::ollama_models(), width = "100%"),
         selectInput( "extraction_type", "Type of Extraction Element", choices = c("Integer" = "integer", "Double" = "number", "Binary" = "boolean", "Text" = "string"), width = "100%" ),
+        selectInput("abstract_col", "Select Abstract column", choices = NULL, width = "100%"),
+
       textAreaInput( "LLM_prompt", "Prompt for LLM extraction", height = "100px", placeholder = "Describe exactly what to extract, expected format, and constraints." ),
-      selectInput("abstract_col", "Select Abstract column", choices = NULL, width = "100%"),
-                   card_footer( actionButton("useLLM", "Create LLM Variable", class = "btn-success", width = "100%",icon = icon("robot") ) ) ),
+
+      card_footer( actionButton("useLLM", "Create LLM Variable", class = "btn-success", width = "100%",icon = icon("robot") ) ) ),
+
       card(
         class = "sidebar-card",
         card_header(icon("check-circle"), "Validation"),
@@ -74,6 +99,35 @@ ui <- fluidPage(
 
 server <- function(input, output,session) {
 
+  notify_warn <- function(msg, dur = 6) showNotification(msg, type = "warning", duration = dur)
+  notify_err <- function(msg, dur = 8) showNotification(msg, type = "error", duration = dur)
+  notify_info <- function(msg, dur = 4) showNotification(msg, type = "message", duration = dur)
+
+  output$ollama_warning <- renderUI({
+    if (!ollama_installed()) {
+      div(
+        style = "padding:10px; margin-bottom:15px; border:1px solid red;
+                 background-color:#ffe6e6; color:#990000; border-radius:5px;",
+        strong("⚠ Ollama not installed: "),
+        "Please install Ollama from ",
+        tags$a(href="https://ollama.ai", "https://ollama.ai"),
+        "."
+      )
+    } else if (!ollama_running()) {
+      div(
+        style = "padding:10px; margin-bottom:15px; border:1px solid orange;
+                 background-color:#fff3cd; color:#664d03; border-radius:5px;",
+        strong("⚠ Ollama not running: "),
+        "Ollama is installed but not running.
+         Start it by opening a terminal and running ",
+        code("ollama serve"),
+        "."
+      )
+    } else {
+      NULL  # everything is fine
+    }
+  })
+
   # create log file in the background
   # Don't know how
   temp <- NULL
@@ -82,8 +136,17 @@ server <- function(input, output,session) {
 
   temp_log_file <- tempfile(pattern = "user_log_", fileext = ".csv")
 
+  if (!dir.exists(log_dir)) {
+    dir.create(log_dir)
+    message("Folder created: ", log_dir)
+  } else {
+    message("Folder already exists: ", log_dir)
+  }
+
   current_data <- reactiveVal()
   current_row <- reactiveVal(1)
+  ollama_ok <- reactiveVal(FALSE)
+
 
   observe({
     temp <<- reactiveValues(
@@ -96,6 +159,7 @@ server <- function(input, output,session) {
 
   })
 
+
   observe({
     req(input$file1)
 
@@ -105,11 +169,6 @@ server <- function(input, output,session) {
     updateSelectInput(session, "abstract_col",choices = names(data))
     updateSelectInput(session, "selected_vars", choices = names(data))
     updateSelectInput(session,"var_llm", choices = grep("_llm$", names(data),value = T))
-    #updateSelectInput(session, "value_check",choices = grep("_manual$",names(data) ,value = T))
-
-    # pattern_check <- sub("_llm$", "_manual", input$var_llm)
-
-    #  updateSelectInput(session, "value_check",choices =  grep(pattern_check, names(data),value = T))
 
   })
 
@@ -144,8 +203,12 @@ server <- function(input, output,session) {
 
     check_var <-sub("_llm$", "_manual", input$var_llm)
 
-    paste("Manual Value:", data[current,check_var])
+    if (!check_var %in% names(data)) {
+      return("Manual Value: <missing column>")
+    }
+    paste("Manual Value:", data[current, check_var])
   })
+
 
 
   output$check_value <- renderText({
@@ -277,20 +340,6 @@ server <- function(input, output,session) {
   })
 
 
-  #
-  #  # Observe changes in the text input and update the background color
-  #  observe({
-  #    # Compare the user input with the values in Column1 and Column2
-  #
-  # # # #   browser()
-  # # #
-  #    if ( processed[[1]][[1]] ==  data[current_data,input$value_check]) {
-  #      updateTextInput(session, "LLM_prompt", class = "correct")
-  #    } else {
-  #      updateTextInput(session, "LLM_prompt", class = "incorrect")
-  #    }
-  #  })
-  # #
   # Downloadable csv of selected dataset
   volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
 

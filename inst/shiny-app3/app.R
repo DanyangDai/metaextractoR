@@ -4,71 +4,124 @@ library(DT)
 library(dplyr)
 library(readr)
 library(shinyFiles)
+library(shinyjs)
 
 # UI ----------------------------------------------------------------------
 
 ui <- page_fluid(
-  titlePanel("CSV Data Viewer and Editor"),
+theme = bs_theme(
+ bootswatch = "flatly",
+ primary = "#2C7BE5",
+ base_font = font_google("Inter"),
+ heading_font = font_google("Inter")
+ ),
 
-  card(
-    card_header("Upload CSV File"),
-    fileInput("file", "Choose CSV File", accept = ".csv")
+  useShinyjs(),
+  tags$head(
+    tags$style(HTML("
+ .card-header { font-weight: 600; }
+ .mb-3 { margin-bottom: 1rem !important; }
+ .btn + .btn { margin-left: .5rem; }
+ .shiny-input-container { width: 100%; }
+ .soft-text { color: #6c757d; font-size: 0.9rem; }
+ .table-wrap { height: 50vh; overflow: auto; }
+ .table-wrap-tall { height: 60vh; overflow: auto; }
+ "))
   ),
 
-  # New Card for Other Columns Selection
-  card(
-    card_header("Other Columns Display"),
-    uiOutput("other_columns_selector"),
-    DTOutput("other_columns_table")
-  ),
+  titlePanel(div(icon("table"), "CSV Data Viewer and Editor")),
 
-  fluidRow(
-    column(6,
-           card(
-             card_header("Navigation"),
-             fluidRow(
-               column(4, numericInput("current_row", "Current Row:", 1, min = 1, step = 1)),
-               column(4, actionButton("prev_row", "Previous Row", class = "btn-secondary")),
-               column(4, actionButton("next_row", "Next Row", class = "btn-secondary"))
-             ),
-             textOutput("row_info")
-           )
-    ),
-    column(6,
-           card(
-             card_header("Actions"),
-             actionButton("copy_values", "Copy _llm values to _manual", class = "btn-primary")
-           )
+  card(
+    class = "mb-3",
+    card_header(div(icon("upload"), "Upload CSV File")),
+    card_body(
+      fileInput("file", "Choose CSV File", accept = ".csv", width = "100%"),
+      div(class = "soft-text", "Upload a CSV file to begin. Large files may take a moment to load.")
     )
   ),
 
-  fluidRow(
-    column(6,
-           card(
-             card_header("Variables ending with _llm"),
-             DTOutput("llm_table")
-           )
+  card(
+    class = "mb-3",
+    card_header(div(icon("columns"), "Other Columns Display")),
+    card_body(
+      uiOutput("other_columns_selector"),
+      div(class = "soft-text", "Select which additional columns to show alongside your main tables.")
     ),
-    column(6,
-           card(
-             card_header("Variables ending with _manual (Editable)"),
-             DTOutput("manual_table")
-           )
-    ),
-    column(6,
-           card(
-             card_header("Warning"),
-             verbatimTextOutput("warning_message")
-           )
+
+    card_body(
+      div(class = "table-wrap", DTOutput("other_columns_table"))
     )
   ),
-
-  shinySaveButton("saveFile", "Save CSV", "Save as...")
+  fluidRow(
+    column(
+      6,
+      card(
+        class = "mb-3",
+        card_header(div(icon("compass"), "Navigation")),
+        card_body(
+          fluidRow(
+            column(4, numericInput("current_row", "Current Row:", 1, min = 1, step = 1, width = "100%")),
+            column(4, actionButton("prev_row", "Previous Row", class = "btn btn-secondary w-100", icon = icon("arrow-left"))),
+            column(4, actionButton("next_row", "Next Row", class = "btn btn-secondary w-100", icon = icon("arrow-right")))
+          ),
+          div(class = "soft-text mt-2", "Use the controls to move through rows."),
+          div(style = "margin-top: .5rem;", textOutput("row_info"))
+        )
+      )
+    ),
+    column(
+      6,
+      card(
+        class = "mb-3",
+        card_header(div(icon("wand-magic-sparkles"), "Actions")),
+        card_body(
+          actionButton("copy_values", "Copy llm values to manual", class = "btn btn-primary", icon = icon("copy")),
+          div(class = "soft-text mt-2", "Copies LLM-derived values into the corresponding editable manual fields.")
+        )
+      )
+    )
+  ),
+  fluidRow(
+    column(
+      6,
+      card(
+        class = "mb-3",
+        card_header(div(icon("robot"), "Variables ending with _llm")),
+        card_body(
+          div(class = "table-wrap-tall", DTOutput("llm_table"))
+        )
+      )
+    ),
+    column(
+      6,
+      card(
+        class = "mb-3",
+        card_header(div(icon("pen-to-square"), "Variables ending with _manual (Editable)")),
+        card_body(
+          div(class = "table-wrap-tall", DTOutput("manual_table"))
+        )
+      )
+    ),
+    column(
+      6,
+      card(
+        class = "mb-3",
+        card_header(div(icon("triangle-exclamation"), "Warning")),
+        card_body(
+          verbatimTextOutput("warning_message")
+        )
+      )
+    )
+  ),
+  shinySaveButton("saveFile", "Save CSV", "Save as...", icon = icon("download"))
 )
+
 
 # SERVER ------------------------------------------------------------------
 
 server <- function(input, output, session) {
+
+
   # Initialize reactive values
   vals <- reactiveValues(
     data = NULL,

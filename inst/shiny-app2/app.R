@@ -51,7 +51,7 @@ ui <- fluidPage(
       actionButton("upload_data", "Upload abstracts", class = "btn-primary", width = "100%"),
       hr(),
 
-      h5("Select columns"),
+      h5("Select columns to Display on the Data Preview"),
       selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE, width = "100%"),
 
       card(

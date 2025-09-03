@@ -4,12 +4,18 @@
 \name{metaextractoR-package}
 \alias{metaextractoR}
 \alias{metaextractoR-package}
-\title{metaextractoR: What the Package Does (Title Case)}
+\title{metaextractoR:}
 \description{
-More about what it does (maybe more than one line). Continuation lines should be indented.
+This is an R package that utilises Large Language Models to assist with data extraction during meta-analysis. This package incorporates three modular Shiny apps to implement a human-in-the-loop framework. (1) a manual extraction interface for abstracts, (2) refining prompt engineering and model selection, and (3) validation of LLM-generated outputs. These apps enable researchers to iteratively collaborate with LLMs, with each abstract undergoing double data extraction—once manually by a human researcher and once independently by an LLM-assisted process—to emulate the double extraction process recommended by international standards. Notably, the package runs fully on local machines, with no need for API setup or external data transfer, maximising data privacy and accessibility. Robust logging features further enhance transparency and reproducibility by recording all prompt iterations and outputs.
 }
 \author{
-\strong{Maintainer}: Danyang Dai \email{danyang.dai@uq.edu.au}
+\strong{Maintainer}: Danyang Dai \email{danyang.dai@uq.edu.au} (\href{https://orcid.org/0009-0006-3984-291X}{ORCID})
+
+Authors:
+\itemize{
+  \item Emi Tanaka \email{Emi.Tanaka@anu.edu.au} (\href{https://orcid.org/0000-0002-1455-259X}{ORCID})
+  \item Jason Pole \email{j.pole@uq.edu.au} (\href{https://orcid.org/0000-0002-0413-5434}{ORCID})
+}
 
 }
 \keyword{internal}

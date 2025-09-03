@@ -59,7 +59,7 @@ ui <- page_sidebar(
     primary = "#2C7BE5"
   ),
   head_content = tags$head(
-    includeCSS("inst/www/checkbox.css"),
+  #  includeCSS("inst/www/checkbox.css"),
     tags$link(rel = "icon", type = "image/png", href = "www/favicon.png"),
     tags$style(HTML("
  .sidebar {

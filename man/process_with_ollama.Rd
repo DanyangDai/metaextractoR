@@ -7,11 +7,11 @@
 process_with_ollama(input, model = "llama3.1:8b", type_abstract, i)
 }
 \arguments{
-\item{input}{A data frame contains abstracts and variables we want to extract.}
+\item{input}{A data frame contains abstracts and variables we want to extract. If you are not sure how the data should look like, please see the example dataset abstract. This data should be the testing data saved using the `save_training_data()` function.}
 
-\item{model}{Large Language Model name you want to use i.e. "llama3.1:8b"}
+\item{model}{Large Language Model name you want to use i.e. "llama3.1:8b". If you are not sure what LLMs have been installed locally, please use the function: ellmer:::ollama_models() to find out what LLMs are available.}
 
-\item{type_abstract}{is created using the type_object function from the ellmer package. Objects represent a collection of named values and are created with type_object(). Objects can contain any number of scalars, arrays, and other objects. They are similar to named lists in R.}
+\item{type_abstract}{is created using the type_object function from the ellmer package. Objects represent a collection of named values and are created with type_object(). Objects can contain any number of scalars, arrays, and other objects. They are similar to named lists in R. If still not sure, please look up the documentation of ellmer::type_object().}
 
 \item{i}{number of abstracts you want to process at once.}
 }

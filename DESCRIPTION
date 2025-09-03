@@ -4,13 +4,40 @@ Title: What the Package Does (Title Case)
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Danyang", "Dai",
+      given = "Danyang", 
+      family = "Dai",
       email = "danyang.dai@uq.edu.au",
-      role = c("aut", "cre")
+      role = c("aut", "cre"),
+      comment = c(ORCID = "0009-0006-3984-291X")
+    ),
+    person(
+    given = "Emi",
+    family = "Tanaka",
+    email = "Emi.Tanaka@anu.edu.au",
+    role = c("aut"),
+    comment = c(ORCID = "0000-0002-1455-259X")
+    ),
+    person(
+    given = "Jason",
+    family = "Pole",
+    email = "j.pole@uq.edu.au",
+    role = c("aut"),
+    comment = c(ORCID = "0000-0002-0413-5434")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Description: This is an R package that utilises Large Language Models to assist
+    with data extraction during meta-analysis. This package incorporates three
+    modular Shiny apps to implement a human-in-the-loop framework. (1) a manual
+    extraction interface for abstracts, (2) refining prompt engineering and model
+    selection, and (3) validation of LLM-generated outputs. These apps enable
+    researchers to iteratively collaborate with LLMs, with each abstract
+    undergoing double data extraction—once manually by a human researcher and once
+    independently by an LLM-assisted process—to emulate the double extraction
+    process recommended by international standards. Notably, the package runs
+    fully on local machines, with no need for API setup or external data transfer,
+    maximising data privacy and accessibility. Robust logging features further
+    enhance transparency and reproducibility by recording all prompt iterations
+    and outputs.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

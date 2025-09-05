@@ -13,7 +13,7 @@
 #' @export
 prompt_engineering_app <- function(){
 
-  app_dir <- system.file("app2.R", package = "metaextractoR")
+  app_dir <- system.file("shiny-app2/app.R", package = "metaextractoR")
 
   shiny::runApp(app_dir, display.mode = "normal")
 }

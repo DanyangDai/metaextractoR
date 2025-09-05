@@ -12,7 +12,7 @@
 #'
 #' @return new dataset with additional empty columns
 #'
-
+#' @export
 add_predefined_vars <- function(data,list_vars){
 
   if (is.null(data)){
@@ -41,7 +41,7 @@ add_predefined_vars <- function(data,list_vars){
 #'
 #' @param percentage percentage of separation training sets.
 #'
-
+#' @export
 separate_training <- function(data, percentage = 0.1){
 
 

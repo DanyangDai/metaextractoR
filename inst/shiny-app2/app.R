@@ -38,8 +38,8 @@ ollama_running <- function() {
 ui <- fluidPage(
   uiOutput("ollama_warning"),
   useShinyjs(),
-  includeCSS("inst/www/checkbox.css"),
-  includeCSS("inst/www/correct.css"),
+  # includeCSS("inst/www/checkbox.css"),
+  # includeCSS("inst/www/correct.css"),
   page_sidebar(
     title = "Prompt Engineering",
     theme = bslib::bs_theme(bootswatch = "flatly"),

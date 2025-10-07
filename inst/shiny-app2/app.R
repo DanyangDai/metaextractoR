@@ -35,64 +35,82 @@ ollama_running <- function() {
 }
 
 # UI ----------------------------------------------------------------------
-ui <- fluidPage(
-  uiOutput("ollama_warning"),
-  useShinyjs(),
-  # includeCSS("inst/www/checkbox.css"),
-  # includeCSS("inst/www/correct.css"),
-  page_sidebar(
-    title = "Prompt Engineering",
-    theme = bslib::bs_theme(bootswatch = "flatly"),
-    sidebar = bslib::sidebar(
-      width = 500,  h5("Upload data"),
-      fileInput( "file1", "Choose CSV File",
-      multiple = FALSE, accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"), width = "100%" ),
-      checkboxInput("header", "Header", TRUE),
-      actionButton("upload_data", "Upload abstracts", class = "btn-primary", width = "100%"),
-      hr(),
-
-      h5("Select columns to Display on the Data Preview"),
-      selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE, width = "100%"),
-
-      card(
-        header = card_header(icon("wand-magic-sparkles"),"Use LLM for data extraction"),
-        selectInput("var_llm", "Select LLM variable column", choices = NULL, width = "100%"),
-        selectInput("model_name", "Model Name", choices = ellmer:::ollama_models(), width = "100%"),
-        selectInput( "extraction_type", "Type of Extraction Element", choices = c("Integer" = "integer", "Double" = "number", "Binary" = "boolean", "Text" = "string"), width = "100%" ),
-        selectInput("abstract_col", "Select Abstract column", choices = NULL, width = "100%"),
-
-      textAreaInput( "LLM_prompt", "Prompt for LLM extraction", height = "100px", placeholder = "Describe exactly what to extract, expected format, and constraints." ),
-
-      card_footer( actionButton("useLLM", "Create LLM Variable", class = "btn-success", width = "100%",icon = icon("robot") ) ) ),
-
-      card(
-        class = "sidebar-card",
-        card_header(icon("check-circle"), "Validation"),
-        div(style = "min-height: 1.5em;", textOutput("variable_check")),
-        div(style = "min-height: 1.5em;", textOutput("check_value")),
-        div(style = "min-height: 1.5em;", textOutput("equalCheck"))
+ui <- bslib::page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPage)
+  title = "Prompt Engineering",
+  theme = bslib::bs_theme(bootswatch = "flatly"),
+  fillable = TRUE, # NEW: allow content to fill the viewport (enables no page scroll)
+  sidebar = bslib::sidebar(
+    width = 360, # CHANGED: narrower sidebar to leave more space for main content
+    h5("Upload data"),
+    fileInput(
+      "file1", "Choose CSV File",
+      multiple = FALSE,
+      accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"),
+      width = "100%"
+    ),
+    checkboxInput("header", "Header", TRUE),
+    actionButton("upload_data", "Upload abstracts", class = "btn-primary", width = "100%"),
+    hr(),
+    h5("Select columns to Display on the Data Preview"),
+    selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE, width = "100%"),
+    card(
+      header = card_header(icon("wand-magic-sparkles"), "Use LLM for data extraction"),
+      selectInput("var_llm", "Select LLM variable column", choices = NULL, width = "100%"),
+      selectInput("model_name", "Model Name", choices = ellmer:::ollama_models(), width = "100%"),
+      selectInput(
+        "extraction_type", "Type of Extraction Element",
+        choices = c("Integer" = "integer", "Double" = "number", "Binary" = "boolean", "Text" = "string"),
+        width = "100%"
+      ),
+      selectInput("abstract_col", "Select Abstract column", choices = NULL, width = "100%"),
+      textAreaInput(
+        "LLM_prompt", "Prompt for LLM extraction",
+        height = "80px", # CHANGED: slightly shorter to save vertical space
+        placeholder = "Describe exactly what to extract, expected format, and constraints."
+      ),
+      card_footer(
+        actionButton("useLLM", "Create LLM Variable", class = "btn-success", width = "100%", icon = icon("robot"))
       )
     ),
-
-
-    # Main panel with data table output and edit interface
-    mainPanel(
-      width = 1500,
-      h3("Data Preview"),
-      div(style = "height: 800px; overflow-y: auto;",
-          DTOutput("selected_data")),
-      textOutput("row_indicator"),
-      textOutput("output_newvar_name"),
-      textOutput("output_newvar_value"),
-      fluidRow(
-        column(6, actionButton("pre_btn","Previous")),
-        column(6,  actionButton("next_btn","Next"))
-      ),
-      shinySaveButton("saveFile", "Save CSV", "Save as...")
-
+    card(
+      class = "sidebar-card",
+      card_header(icon("check-circle"), "Validation"),
+      div(style = "min-height: 1.5em;", textOutput("variable_check")),
+      div(style = "min-height: 1.5em;", textOutput("check_value")),
+      div(style = "min-height: 1.5em;", textOutput("equalCheck"))
+    )
+  ),
+  tags$head(tags$style(HTML("
+ html, body { height: 100%; overflow: hidden; } /* NEW: prevent page-level scroll /
+ .bslib-sidebar { max-height: 100vh; overflow-y: auto; }/ NEW: sidebar gets its own scroll when needed */
+ "))),
+  useShinyjs(), # MOVED: stays within page (works the same)
+  uiOutput("ollama_warning"), # MOVED: inside page (top of main content)
+  bslib::card(
+    body_fill = TRUE, # NEW: let the card body fill the remaining height
+    card_header(h3("Data Preview")),
+    bslib::card_body(
+      div(
+        style = "height: 100%; overflow: auto;", # CHANGED: replaces fixed 800px height with flexible fill+scroll
+        DTOutput("selected_data")
+      )
     ),
-  ))
-
+    card_footer(
+      # Controls in a single line to save vertical space
+      div(class = "d-flex gap-2 align-items-center",
+          actionButton("pre_btn","Previous"),
+          actionButton("next_btn","Next"),
+          div(class = "ms-auto", shinySaveButton("saveFile", "Save CSV", "Save as..."))
+      ),
+      # Status texts placed in footer to avoid pushing content vertically
+      div(class = "mt-2 d-flex gap-3",
+          textOutput("row_indicator"),
+          textOutput("output_newvar_name"),
+          textOutput("output_newvar_value")
+      )
+    )
+  )
+)
 
 # SERVER ------------------------------------------------------------------
 

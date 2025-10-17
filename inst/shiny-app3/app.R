@@ -2,7 +2,6 @@ library(shiny)
 library(bslib)
 library(DT)
 library(dplyr)
-library(readr)
 library(shinyFiles)
 library(shinyjs)
 
@@ -143,7 +142,7 @@ server <- function(input, output, session) {
     req(input$file)
 
     # Read the CSV file
-    data <- read_csv(input$file$datapath)
+    data <- read.csv(input$file$datapath)
     vals$data <- data
     vals$total_rows <- nrow(data)
 

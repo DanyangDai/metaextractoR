@@ -3,7 +3,6 @@ library(shiny)
 library(bslib)
 library(DT)
 library(ellmer)
-library(purrr)
 library(shinyjs)
 library(shinyFiles)
 
@@ -56,7 +55,7 @@ ui <- bslib::page_sidebar( # CHANGED: use bslib page as the top-level (replaces 
     card(
       header = card_header(icon("wand-magic-sparkles"), "Use LLM for data extraction"),
       selectInput("var_llm", "Select LLM variable column", choices = NULL, width = "100%"),
-      selectInput("model_name", "Model Name", choices = ellmer:::ollama_models(), width = "100%"),
+      selectInput("model_name", "Model Name", choices = models_ollama(), width = "100%"),
       selectInput(
         "extraction_type", "Type of Extraction Element",
         choices = c("Integer" = "integer", "Double" = "number", "Binary" = "boolean", "Text" = "string"),
@@ -297,7 +296,7 @@ server <- function(input, output,session) {
                         api_args = list(temperature = 0))
 
 
-    processed <- map(df[[input$abstract_col]], function(abstract) {
+    processed <- lapply(df[[input$abstract_col]], function(abstract) {
       bot <- chat$clone()
       bot$extract_data(abstract, type = type_abstract)
     })

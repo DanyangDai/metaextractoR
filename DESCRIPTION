@@ -55,7 +55,6 @@ Imports:
     cli,
     vctrs,
     dplyr,
-    purrr,
     fs
 Suggests: 
     testthat (>= 3.0.0)

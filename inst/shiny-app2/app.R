@@ -34,11 +34,11 @@ ollama_running <- function() {
 }
 
 # UI ----------------------------------------------------------------------
-ui <- bslib::page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPage)
+ui <- page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPage)
   title = "Prompt Engineering",
-  theme = bslib::bs_theme(bootswatch = "flatly"),
+  theme = bs_theme(bootswatch = "flatly"),
   fillable = TRUE, # NEW: allow content to fill the viewport (enables no page scroll)
-  sidebar = bslib::sidebar(
+  sidebar = sidebar(
     width = 360, # CHANGED: narrower sidebar to leave more space for main content
     h5("Upload data"),
     fileInput(
@@ -85,10 +85,10 @@ ui <- bslib::page_sidebar( # CHANGED: use bslib page as the top-level (replaces 
  "))),
   useShinyjs(), # MOVED: stays within page (works the same)
   uiOutput("ollama_warning"), # MOVED: inside page (top of main content)
-  bslib::card(
+  card(
     body_fill = TRUE, # NEW: let the card body fill the remaining height
     card_header(h3("Data Preview")),
-    bslib::card_body(
+    card_body(
       div(
         style = "height: 100%; overflow: auto;", # CHANGED: replaces fixed 800px height with flexible fill+scroll
         DTOutput("selected_data")

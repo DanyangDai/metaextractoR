@@ -40,6 +40,7 @@ ui <- page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPa
   fillable = TRUE, # NEW: allow content to fill the viewport (enables no page scroll)
   sidebar = sidebar(
     width = 360, # CHANGED: narrower sidebar to leave more space for main content
+    downloadButton("download_sample", "Download Sample Data from GitHub"),
     h5("Upload data"),
     fileInput(
       "file1", "Choose CSV File",
@@ -385,6 +386,18 @@ server <- function(input, output,session) {
     }
   })
 
+
+  output$download_sample <- downloadHandler(
+    filename = function() {
+      "sample_data_app1.csv"
+    },
+    content = function(file) {
+      # GitHub raw file URL
+      url <- "https://github.com/DanyangDai/metaextractoR"
+      # Download file
+      GET(url, write_disk(file, overwrite = TRUE))
+    }
+  )
 
 }
 

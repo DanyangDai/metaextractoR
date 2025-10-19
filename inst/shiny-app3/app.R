@@ -32,6 +32,7 @@ theme = bs_theme(
   card(
     class = "mb-3",
     card_header(div(icon("upload"), "Upload CSV File")),
+    downloadButton("download_sample", "Download Sample Data from GitHub"),
     card_body(
       fileInput("file", "Choose CSV File", accept = ".csv", width = "100%"),
       div(class = "soft-text", "Upload a CSV file to begin. Large files may take a moment to load.")
@@ -352,6 +353,19 @@ server <- function(input, output, session) {
       showNotification(paste("File saved to:", filepath), type = "message")
     }
   })
+
+
+  output$download_sample <- downloadHandler(
+    filename = function() {
+      "sample_data_app1.csv"
+    },
+    content = function(file) {
+      # GitHub raw file URL
+      url <- "https://github.com/DanyangDai/metaextractoR"
+      # Download file
+      GET(url, write_disk(file, overwrite = TRUE))
+    }
+  )
 
   # Show save button only if data is loaded
   # output$save_button_ui <- renderUI({

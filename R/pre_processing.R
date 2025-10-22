@@ -39,7 +39,7 @@ add_predefined_vars <- function(data,list_vars){
 #'
 #' @param data The csv file contains abstracts with
 #'
-#' @param percentage percentage of separation training sets.
+#' @param percentage percentage of separation training sets. If percentage set to be 0.1, 10% of the data will be the training set and 90% of the data will be testing set.
 #'
 #' @export
 separate_training <- function(data, percentage = 0.1){
@@ -51,8 +51,8 @@ separate_training <- function(data, percentage = 0.1){
   test_indices <- sample(seq_len(nrow(data)), size = sample_size)
 
   # Split data into training and testing sets
-  test_df <- data[test_indices, ]
-  train_df <- data[-test_indices, ]
+  test_df <- data[-test_indices, ]
+  train_df <- data[test_indices, ]
 
   return(list(train = train_df, test = test_df))
 
@@ -113,3 +113,4 @@ save_testing_data <- function(testing_abs) {
   write.csv(testing_abs, file = file_path,row.names = F)
 
 }
+

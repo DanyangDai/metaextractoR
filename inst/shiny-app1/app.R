@@ -109,6 +109,7 @@ ui <- page_sidebar(
       )
     ),
     div(class = "data-height",
+        style = "height: 500px; overflow-y: auto; margin-top: 10px;",
         DTOutput("selected_data")
     )
   ),

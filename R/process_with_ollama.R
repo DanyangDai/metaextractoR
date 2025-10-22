@@ -13,6 +13,8 @@
 #'
 #' @param i number of abstracts you want to process at once.
 #'
+#' @param abstract_col column name for the column contains abstract. i.e. abstracto_col = "Abstract"
+#'
 #' @importFrom ellmer chat_ollama
 #' @importFrom purrr imap_dfr
 #' @importFrom dplyr bind_cols
@@ -37,20 +39,109 @@
 #' }
 #'
 
-process_with_ollama <- function(input,model = "llama3.1:8b", type_abstract,i) {
+process_with_ollama <- function(input,model = "llama3.1:8b", type_abstract,i, abstract_col) {
+
+
+  input <- input |>
+    select(-ends_with("llm"))
+
+  # Validate input
+  if (!is.data.frame(input)) {
+    stop("Input must be a data frame")
+  }
+
+  if (!abstract_col %in% colnames(input)) {
+    stop(sprintf("Column '%s' not found in the data frame. Available columns: %s",
+                 abstract_col, paste(colnames(input), collapse = ", ")))
+  }
+
+  result_df <- input
+
+  # Convert abstracts to character and handle NA values
+  result_df[[abstract_col]] <- as.character(result_df[[abstract_col]])
+  result_df[[abstract_col]][is.na(result_df[[abstract_col]])] <- ""
+
   if(missing(i)) i <- 1:nrow(input)
+
   chat <- chat_ollama(model = model,
                       seed = 1,
                       api_args = list(temperature = 0))
   start <- Sys.time()
-  processed <- imap_dfr(input$abstract[i], function(abstract, num) {
-    cli::cli_alert("Processing abstract #{i[num]}")
-    bot <- chat$clone()
-    bot$extract_data(abstract, type = type_abstract)
+
+  results <- list()  # Collect all results here
+  for (num in i) {
+    cli::cli_alert(sprintf("Processing abstract #%d", num))
+    # Get the abstract text directly
+    abstract_text <- result_df[[abstract_col]][num]
+    # Skip if abstract is too short (optional)
+    if (nchar(abstract_text) < 10) {
+      cli::cli_alert_warning(sprintf("Abstract #%d is too short, skipping", num))
+      next
+    }
+
+    tryCatch({
+      # Create a new chat instance for each abstract
+      bot <- chat$clone()
+      # Extract data and capture the result
+      result <- bot$extract_data(abstract_text, type = type_abstract)
+
+      # Store the result with the index as key
+      results[[as.character(num)]] <- result
+
+    }, error = function(e) {
+      # Add error handling
+      cli::cli_alert_danger(sprintf("Error processing abstract #%d: %s", num, e$message))
+      # For errors, store NULL (we'll handle it later)
+      results[[as.character(num)]] <- NULL
+    })
+  }
+
+  create_empty_row <- function(template_df) {
+    if (is.null(template_df) || nrow(template_df) == 0) {
+      return(data.frame(placeholder = NA))
+    }
+
+    # Create a data frame with same columns but NA values
+    empty_row <- as.data.frame(lapply(template_df, function(col) {
+      if (is.factor(col)) {
+        factor(NA, levels = levels(col))
+      } else {
+        as(NA, class(col)[1])
+      }
+    }))
+
+    return(empty_row)
+  }
+
+  # Find template from non-NULL results
+  template <- Find(function(x) !is.null(x), results)
+
+  # Process results
+  results_processed <- lapply(names(results), function(idx) {
+    result <- results[[idx]]
+
+    if (is.null(result)) {
+      empty_row <- create_empty_row(template)
+      empty_row$row_id <- idx
+      empty_row
+    } else {
+      result$row_id <- idx
+      result
+    }
   })
+
+  processed <- bind_rows(results_processed)
+
+
+  # Log processing information
+  message(sprintf("Started with %d abstracts",
+                  length(i)))
+
   end <- Sys.time()
-  data <- bind_cols(input[i, ], processed)
-  # |>
-  #   mutate(valid_accuracy = no_of_patients_overall == no_patients)
+
+  data <- bind_cols(result_df[i, ], processed)
+
   return(list(data, time = end - start))
 }
+
+

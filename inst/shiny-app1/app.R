@@ -232,7 +232,7 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       # GitHub raw file URL
-      url <- "https://github.com/DanyangDai/metaextractoR"
+      url <- "https://github.com/DanyangDai/metaextractoR/blob/main/sample_data/training_stage_0_data.csv"
       # Download file
       GET(url, write_disk(file, overwrite = TRUE))
     }

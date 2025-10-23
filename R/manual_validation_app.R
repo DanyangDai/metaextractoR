@@ -9,6 +9,7 @@
 #' \dontrun{
 #' manual_validation_app()
 #' }
+#' @return Runs a shiny app.
 #'
 #' @export
 manual_validation_app <- function() {

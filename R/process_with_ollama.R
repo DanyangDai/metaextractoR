@@ -37,6 +37,8 @@
 #' process_with_ollama()
 #' }
 #'
+#' @return Returns a data.frame with results and time.
+#'
 #' @export
 process_with_ollama <- function(
   input,

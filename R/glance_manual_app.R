@@ -7,7 +7,6 @@
 #' @examples
 #' \donotrun{
 #' glance_manual_app()
-#' }
 #' @export
 glance_manual_app <- function() {
   app_dir <- system.file("shiny-app1/app.R", package = "metaextractoR")

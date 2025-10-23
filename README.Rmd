@@ -8,15 +8,13 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%",
-  eval = FALSE
+  eval = TRUE
 )
 ```
 
 <!-- badges: start -->
 [![version](http://www.r-pkg.org/badges/version/metaextractoR)](https://CRAN.R-project.org/package=metaextractoR)
-[![cranlogs](http://cranlogs.r-pkg.org/badges/metaextractoR)](https://CRAN.R-project.org/package=metaextractoR)
-[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
-
+[![cranlogs](http://cranlogs.r-pkg.org/badges/metaextractoR)](https://CRAN.R-project.org/package=metaextractoR) [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 
@@ -34,9 +32,7 @@ Download and install Large Language Models (LLMs) for local usage supported by `
 ollama run your_choice_of_models
 ```
 
-Explore your choice of models: [Ollama](https://ollama.com)
-
-Currently this version of the package only supports local LLMs. 
+Explore your choice of models at [Ollama](https://ollama.com). Currently this version of the package only supports local LLMs via Ollama. 
 
 
 ## Workflow 
@@ -45,11 +41,11 @@ This package design fit in to the [Preferred Reporting Items for Systematic revi
 
 For systematic review and meta-analysis, users are encouraged to follow the study protocol developed for the systematic review and meta-analysis. This package will streamline the data extraction part in your systematic review with the power of Large Language Models (LLMs) while keeping a human in the loop for accuracy and oversight. 
 
-For documentation: see working paper [working paper]()
+For more information, see our working paper [here](https://github.com/DanyangDai/LLM-Meta-Analysis/blob/main/RSM/RSM.pdf).
 
 ### 1. Getting the abstract information 
 
-Once full-text review has been completed, you should have a list of articles included for the full-text extraction. At this stage, the user should have an csv file that contains a list of abstracts. If you are using [Covidence](https://www.covidence.org), the csv file can be downloaded following the steps below:  
+Once full-text review has been completed, you should have a list of articles included for the full-text extraction. At this stage, the user should have a csv file that contains a list of abstracts. If you are using [Covidence](https://www.covidence.org), the csv file can be downloaded following the steps below:  
 
 
 ![](man/figures/export_abs_1.gif)
@@ -65,17 +61,24 @@ You can also use the sample data provided to you using `data("abstracts")` to lo
 
 ### 2. Adding new columns to the raw abstract file
 
-Once you have download or exported the csv file containing the abstracts, you can read in the csv file to your R environment. 
+Once you have download or exported the csv file containing the abstracts, you can read in the csv file to your R environment. Below we use our example data.
 
-Following your systematic review protocol, we are going to create empty columns with pre-defined data extraction elements by using the function: `add_predefined_vars`. 
+```{r}
+library(metaextractoR)
+str(abstracts)
+```
 
-Example for using `add_predefined_vars`
+
+
+Following your systematic review protocol, we are going to create empty columns with pre-defined data extraction elements by using the function, `add_predefined_vars`. The new columns create placeholders for values entered either manuallly or extracted from a LLM.
 
 
 ```{r}
-abstracts_wt_vars <- add_predefined_vars(abstracts, c("no_participants","no_aki","age_mean","age_sd"))
-
-colnames(abstracts_wt_vars)
+abstracts_wt_vars <- add_predefined_vars(
+  abstracts,
+  c("no_participants", "no_aki", "age_mean", "age_sd")
+)
+str(abstracts_wt_vars)
 ```
 
 
@@ -91,7 +94,7 @@ The training set will be used in Shinyapp 1 `glance_manual_app()` and Shinyapp 2
 Using function `separate_training()` to divide the full sample into training and testing. Follow the example:
 
 ```{r}
-separate_abs <- separte_training(abstracts_wt_vars, percentage = 0.4)
+separate_abs <- separate_training(abstracts_wt_vars, percentage = 0.4)
 ```
 
 To make sure that we are consistent with our training set and to avoid contamination of the testing set, we will save the training and testing abstracts into csv files. 
@@ -99,6 +102,7 @@ To make sure that we are consistent with our training set and to avoid contamina
 To save the training set: `save_training_data()`. This function will create a folder named "metaextractor_data" folder under your current working directory. If you could not find your current working directory, use `getwd()` to find your current working directory. Follow the example to save the training and testing csv files:
 
 ```{r}
+#| eval: false
 save_training_data(separate_abs$train)
 
 save_testing_data(separate_abs$test)
@@ -114,6 +118,7 @@ Under the `metaextractor_data` folder, the `training_stage_0_data.csv` file shou
 To load the `glance_manual_app()` run code.
 
 ```{r}
+#| eval: false
 glance_manual_app()
 ```
 

@@ -4,8 +4,7 @@
 [![version](http://www.r-pkg.org/badges/version/metaextractoR)](https://CRAN.R-project.org/package=metaextractoR)
 [![cranlogs](http://cranlogs.r-pkg.org/badges/metaextractoR)](https://CRAN.R-project.org/package=metaextractoR)
 [![Lifecycle:
-stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
-
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 ## Installation
@@ -24,9 +23,8 @@ to install models:
 ollama run your_choice_of_models
 ```
 
-Explore your choice of models: [Ollama](https://ollama.com)
-
-Currently this version of the package only supports local LLMs.
+Explore your choice of models at [Ollama](https://ollama.com). Currently
+this version of the package only supports local LLMs via Ollama.
 
 ## Workflow
 
@@ -41,13 +39,14 @@ meta-analysis. This package will streamline the data extraction part in
 your systematic review with the power of Large Language Models (LLMs)
 while keeping a human in the loop for accuracy and oversight.
 
-For documentation: see working paper [working paper]()
+For more information, see our working paper
+[here](https://github.com/DanyangDai/LLM-Meta-Analysis/blob/main/RSM/RSM.pdf).
 
 ### 1. Getting the abstract information
 
 Once full-text review has been completed, you should have a list of
 articles included for the full-text extraction. At this stage, the user
-should have an csv file that contains a list of abstracts. If you are
+should have a csv file that contains a list of abstracts. If you are
 using [Covidence](https://www.covidence.org), the csv file can be
 downloaded following the steps below:
 
@@ -66,18 +65,51 @@ Covidence.
 ### 2. Adding new columns to the raw abstract file
 
 Once you have download or exported the csv file containing the
-abstracts, you can read in the csv file to your R environment.
-
-Following your systematic review protocol, we are going to create empty
-columns with pre-defined data extraction elements by using the function:
-`add_predefined_vars`.
-
-Example for using `add_predefined_vars`
+abstracts, you can read in the csv file to your R environment. Below we
+use our example data.
 
 ``` r
-abstracts_wt_vars <- add_predefined_vars(abstracts, c("no_participants","no_aki","age_mean","age_sd"))
+library(metaextractoR)
+str(abstracts)
+#> tibble [50 × 8] (S3: tbl_df/tbl/data.frame)
+#>  $ Title          : chr [1:50] "Development of a Risk Score for AKI onset in COVID-19 Patients: COV-AKI Score" "Risk factors associated with acute kidney injury in a cohort of hospitalized patients with COVID-19" "Clinical Features and Outcomes of Acute Kidney Injury in Critically Ill COVID-19 Patients: A Retrospective Observational Study" "Acute kidney injury in coronavirus infectious disease: a study of incidence, risk factors, and prognosis during"| __truncated__ ...
+#>  $ Authors        : chr [1:50] "Palomba, H.; Cubos, D.; Bozza, F.; Zampieri, F.G.; Romano, T.G." "Contreras-Villamizar, K.; Barbosa, O.; Muñoz, A.C.; Suárez, J.S.; González, C.A.; Vargas, D.C.; Rodríguez-Sánch"| __truncated__ "Bouguezzi, N.; Ben Saida, I.; Toumi, R.; Meddeb, K.; Ennouri, E.; Bedhiafi, A.; Hamdi, D.; Boussarsar, M." "Magalhães, L.E.; de Oliveira, P.G.S.; Favarin, A.J.; Yuasa, B.K.; Cardoso, P.A.; Zamoner, W.; Ponce, D." ...
+#>  $ Abstract       : chr [1:50] "Purpose: Acute Kidney Injury (AKI) in COVID-19 patients is associated with increased morbidity and mortality. I"| __truncated__ "Background: Patients with COVID-19 have a high incidence of acute kidney injury (AKI), which is associated with"| __truncated__ "Background: An alarming number of COVID-19 patients, especially in severe cases, have developed acute kidney in"| __truncated__ "Introduction: Acute kidney injury (AKI) is one of the main complications of COVID-19 caused by SARS-CoV-2. This"| __truncated__ ...
+#>  $ Published Year : num [1:50] 2023 2023 2023 2023 2023 ...
+#>  $ Published Month: chr [1:50] NA NA NA NA ...
+#>  $ Journal        : chr [1:50] "BMC Nephrology" "BMC Nephrology" "Journal of Clinical Medicine" "International Urology and Nephrology" ...
+#>  $ DOI            : chr [1:50] "10.1186/s12882-023-03095-4" "10.1186/s12882-023-03172-8" "10.3390/jcm12155127" "10.1007/s11255-022-03454-4" ...
+#>  $ Covidence #    : chr [1:50] "#3896" "#3901" "#3981" "#4035" ...
+```
 
-colnames(abstracts_wt_vars)
+Following your systematic review protocol, we are going to create empty
+columns with pre-defined data extraction elements by using the function,
+`add_predefined_vars`. The new columns create placeholders for values
+entered either manuallly or extracted from a LLM.
+
+``` r
+abstracts_wt_vars <- add_predefined_vars(
+  abstracts,
+  c("no_participants", "no_aki", "age_mean", "age_sd")
+)
+str(abstracts_wt_vars)
+#> tibble [50 × 16] (S3: tbl_df/tbl/data.frame)
+#>  $ Title                 : chr [1:50] "Development of a Risk Score for AKI onset in COVID-19 Patients: COV-AKI Score" "Risk factors associated with acute kidney injury in a cohort of hospitalized patients with COVID-19" "Clinical Features and Outcomes of Acute Kidney Injury in Critically Ill COVID-19 Patients: A Retrospective Observational Study" "Acute kidney injury in coronavirus infectious disease: a study of incidence, risk factors, and prognosis during"| __truncated__ ...
+#>  $ Authors               : chr [1:50] "Palomba, H.; Cubos, D.; Bozza, F.; Zampieri, F.G.; Romano, T.G." "Contreras-Villamizar, K.; Barbosa, O.; Muñoz, A.C.; Suárez, J.S.; González, C.A.; Vargas, D.C.; Rodríguez-Sánch"| __truncated__ "Bouguezzi, N.; Ben Saida, I.; Toumi, R.; Meddeb, K.; Ennouri, E.; Bedhiafi, A.; Hamdi, D.; Boussarsar, M." "Magalhães, L.E.; de Oliveira, P.G.S.; Favarin, A.J.; Yuasa, B.K.; Cardoso, P.A.; Zamoner, W.; Ponce, D." ...
+#>  $ Abstract              : chr [1:50] "Purpose: Acute Kidney Injury (AKI) in COVID-19 patients is associated with increased morbidity and mortality. I"| __truncated__ "Background: Patients with COVID-19 have a high incidence of acute kidney injury (AKI), which is associated with"| __truncated__ "Background: An alarming number of COVID-19 patients, especially in severe cases, have developed acute kidney in"| __truncated__ "Introduction: Acute kidney injury (AKI) is one of the main complications of COVID-19 caused by SARS-CoV-2. This"| __truncated__ ...
+#>  $ Published Year        : num [1:50] 2023 2023 2023 2023 2023 ...
+#>  $ Published Month       : chr [1:50] NA NA NA NA ...
+#>  $ Journal               : chr [1:50] "BMC Nephrology" "BMC Nephrology" "Journal of Clinical Medicine" "International Urology and Nephrology" ...
+#>  $ DOI                   : chr [1:50] "10.1186/s12882-023-03095-4" "10.1186/s12882-023-03172-8" "10.3390/jcm12155127" "10.1007/s11255-022-03454-4" ...
+#>  $ Covidence #           : chr [1:50] "#3896" "#3901" "#3981" "#4035" ...
+#>  $ no_participants_manual: logi [1:50] NA NA NA NA NA NA ...
+#>  $ no_aki_manual         : logi [1:50] NA NA NA NA NA NA ...
+#>  $ age_mean_manual       : logi [1:50] NA NA NA NA NA NA ...
+#>  $ age_sd_manual         : logi [1:50] NA NA NA NA NA NA ...
+#>  $ no_participants_llm   : logi [1:50] NA NA NA NA NA NA ...
+#>  $ no_aki_llm            : logi [1:50] NA NA NA NA NA NA ...
+#>  $ age_mean_llm          : logi [1:50] NA NA NA NA NA NA ...
+#>  $ age_sd_llm            : logi [1:50] NA NA NA NA NA NA ...
 ```
 
 Before processing to the next step, check the current dataset contains
@@ -97,7 +129,7 @@ Using function `separate_training()` to divide the full sample into
 training and testing. Follow the example:
 
 ``` r
-separate_abs <- separte_training(abstracts_wt_vars, percentage = 0.4)
+separate_abs <- separate_training(abstracts_wt_vars, percentage = 0.4)
 ```
 
 To make sure that we are consistent with our training set and to avoid

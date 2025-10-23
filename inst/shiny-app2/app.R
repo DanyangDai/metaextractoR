@@ -46,7 +46,7 @@ ui <- page_sidebar(
   fillable = TRUE, # NEW: allow content to fill the viewport (enables no page scroll)
   sidebar = sidebar(
     width = 360, # CHANGED: narrower sidebar to leave more space for main content
-    downloadButton("download_sample", "Download Sample Data from GitHub"),
+    downloadButton("download_sample", "Download Sample Data"),
     h5("Upload data"),
     fileInput(
       "file1",
@@ -487,13 +487,10 @@ server <- function(input, output, session) {
 
   output$download_sample <- downloadHandler(
     filename = function() {
-      "sample_data_app1.csv"
+      "sample_data_app2.csv"
     },
     content = function(file) {
-      # GitHub raw file URL
-      url <- "https://github.com/DanyangDai/metaextractoR/blob/main/sample_data/app_2.csv"
-      # Download file
-      GET(url, write_disk(file, overwrite = TRUE))
+      write.csv(metaextractoR::app_2, file, row.names = FALSE)
     }
   )
 }

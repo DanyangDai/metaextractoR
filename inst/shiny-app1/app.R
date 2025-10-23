@@ -94,7 +94,7 @@ ui <- page_sidebar(
   ),
   sidebar = sidebar(
     width = 360,
-    downloadButton("download_sample", "Download Sample Data from GitHub"),
+    downloadButton("download_sample", "Download Sample Data"),
     h5(class = "mt-2 mb-2", "Upload your CSV"), fileInput( "file1", label = NULL, multiple = FALSE, accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"), buttonLabel = "Browse...", placeholder = "No file selected" ), div(class = "help-text mb-3", "CSV should contain your abstracts and any other relevant fields." ),  tags$hr(),  h6(class = "mt-2 mb-1", "Options"), checkboxInput("header", "CSV has a header row", TRUE),  selectizeInput( "selected_vars", "Columns to display", choices = NULL, multiple = TRUE, options = list(placeholder = "Start typing to choose columns...") ),  tags$hr(class = "mb-3")
     ),
   div(

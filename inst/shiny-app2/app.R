@@ -1,11 +1,9 @@
-
 library(shiny)
 library(bslib)
 library(DT)
 library(ellmer)
 library(shinyjs)
 library(shinyFiles)
-
 
 
 # Extract unique prefixes
@@ -22,9 +20,16 @@ ollama_installed <- function() {
 }
 
 ollama_running <- function() {
-  con <- try(socketConnection(host = "localhost", port = 11434,
-                              open = "r+", blocking = TRUE,
-                              timeout = 1), silent = TRUE)
+  con <- try(
+    socketConnection(
+      host = "localhost",
+      port = 11434,
+      open = "r+",
+      blocking = TRUE,
+      timeout = 1
+    ),
+    silent = TRUE
+  )
   if (inherits(con, "try-error")) {
     return(FALSE)
   } else {
@@ -34,7 +39,8 @@ ollama_running <- function() {
 }
 
 # UI ----------------------------------------------------------------------
-ui <- page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPage)
+ui <- page_sidebar(
+  # CHANGED: use bslib page as the top-level (replaces fluidPage)
   title = "Prompt Engineering",
   theme = bs_theme(bootswatch = "flatly"),
   fillable = TRUE, # NEW: allow content to fill the viewport (enables no page scroll)
@@ -43,33 +49,76 @@ ui <- page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPa
     downloadButton("download_sample", "Download Sample Data from GitHub"),
     h5("Upload data"),
     fileInput(
-      "file1", "Choose CSV File",
+      "file1",
+      "Choose CSV File",
       multiple = FALSE,
       accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"),
       width = "100%"
     ),
     checkboxInput("header", "Header", TRUE),
-    actionButton("upload_data", "Upload abstracts", class = "btn-primary", width = "100%"),
+    actionButton(
+      "upload_data",
+      "Upload abstracts",
+      class = "btn-primary",
+      width = "100%"
+    ),
     hr(),
     h5("Select columns to Display on the Data Preview"),
-    selectInput("selected_vars", "Select columns", choices = NULL, multiple = TRUE, width = "100%"),
+    selectInput(
+      "selected_vars",
+      "Select columns",
+      choices = NULL,
+      multiple = TRUE,
+      width = "100%"
+    ),
     card(
-      header = card_header(icon("wand-magic-sparkles"), "Use LLM for data extraction"),
-      selectInput("var_llm", "Select LLM variable column", choices = NULL, width = "100%"),
-      selectInput("model_name", "Model Name", choices = models_ollama(), width = "100%"),
+      header = card_header(
+        icon("wand-magic-sparkles"),
+        "Use LLM for data extraction"
+      ),
       selectInput(
-        "extraction_type", "Type of Extraction Element",
-        choices = c("Integer" = "integer", "Double" = "number", "Binary" = "boolean", "Text" = "string"),
+        "var_llm",
+        "Select LLM variable column",
+        choices = NULL,
         width = "100%"
       ),
-      selectInput("abstract_col", "Select Abstract column", choices = NULL, width = "100%"),
+      selectInput(
+        "model_name",
+        "Model Name",
+        choices = models_ollama(),
+        width = "100%"
+      ),
+      selectInput(
+        "extraction_type",
+        "Type of Extraction Element",
+        choices = c(
+          "Integer" = "integer",
+          "Double" = "number",
+          "Binary" = "boolean",
+          "Text" = "string"
+        ),
+        width = "100%"
+      ),
+      selectInput(
+        "abstract_col",
+        "Select Abstract column",
+        choices = NULL,
+        width = "100%"
+      ),
       textAreaInput(
-        "LLM_prompt", "Prompt for LLM extraction",
+        "LLM_prompt",
+        "Prompt for LLM extraction",
         height = "80px", # CHANGED: slightly shorter to save vertical space
         placeholder = "Describe exactly what to extract, expected format, and constraints."
       ),
       card_footer(
-        actionButton("useLLM", "Create LLM Variable", class = "btn-success", width = "100%", icon = icon("robot"))
+        actionButton(
+          "useLLM",
+          "Create LLM Variable",
+          class = "btn-success",
+          width = "100%",
+          icon = icon("robot")
+        )
       )
     ),
     card(
@@ -80,10 +129,12 @@ ui <- page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPa
       div(style = "min-height: 1.5em;", textOutput("equalCheck"))
     )
   ),
-  tags$head(tags$style(HTML("
+  tags$head(tags$style(HTML(
+    "
  html, body { height: 100%; overflow: hidden; } /* NEW: prevent page-level scroll /
  .bslib-sidebar { max-height: 100vh; overflow-y: auto; }/ NEW: sidebar gets its own scroll when needed */
- "))),
+ "
+  ))),
   useShinyjs(), # MOVED: stays within page (works the same)
   uiOutput("ollama_warning"), # MOVED: inside page (top of main content)
   card(
@@ -97,16 +148,21 @@ ui <- page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPa
     ),
     card_footer(
       # Controls in a single line to save vertical space
-      div(class = "d-flex gap-2 align-items-center",
-          actionButton("pre_btn","Previous"),
-          actionButton("next_btn","Next"),
-          div(class = "ms-auto", shinySaveButton("saveFile", "Save CSV", "Save as..."))
+      div(
+        class = "d-flex gap-2 align-items-center",
+        actionButton("pre_btn", "Previous"),
+        actionButton("next_btn", "Next"),
+        div(
+          class = "ms-auto",
+          shinySaveButton("saveFile", "Save CSV", "Save as...")
+        )
       ),
       # Status texts placed in footer to avoid pushing content vertically
-      div(class = "mt-2 d-flex gap-3",
-          textOutput("row_indicator"),
-          textOutput("output_newvar_name"),
-          textOutput("output_newvar_value")
+      div(
+        class = "mt-2 d-flex gap-3",
+        textOutput("row_indicator"),
+        textOutput("output_newvar_name"),
+        textOutput("output_newvar_value")
       )
     )
   )
@@ -114,12 +170,16 @@ ui <- page_sidebar( # CHANGED: use bslib page as the top-level (replaces fluidPa
 
 # SERVER ------------------------------------------------------------------
 
-
-server <- function(input, output,session) {
-
-  notify_warn <- function(msg, dur = 6) showNotification(msg, type = "warning", duration = dur)
-  notify_err <- function(msg, dur = 8) showNotification(msg, type = "error", duration = dur)
-  notify_info <- function(msg, dur = 4) showNotification(msg, type = "message", duration = dur)
+server <- function(input, output, session) {
+  notify_warn <- function(msg, dur = 6) {
+    showNotification(msg, type = "warning", duration = dur)
+  }
+  notify_err <- function(msg, dur = 8) {
+    showNotification(msg, type = "error", duration = dur)
+  }
+  notify_info <- function(msg, dur = 4) {
+    showNotification(msg, type = "message", duration = dur)
+  }
 
   output$ollama_warning <- renderUI({
     if (!ollama_installed()) {
@@ -128,7 +188,7 @@ server <- function(input, output,session) {
                  background-color:#ffe6e6; color:#990000; border-radius:5px;",
         strong("⚠ Ollama not installed: "),
         "Please install Ollama from ",
-        tags$a(href="https://ollama.ai", "https://ollama.ai"),
+        tags$a(href = "https://ollama.ai", "https://ollama.ai"),
         "."
       )
     } else if (!ollama_running()) {
@@ -142,7 +202,7 @@ server <- function(input, output,session) {
         "."
       )
     } else {
-      NULL  # everything is fine
+      NULL # everything is fine
     }
   })
 
@@ -165,7 +225,6 @@ server <- function(input, output,session) {
   current_row <- reactiveVal(1)
   ollama_ok <- reactiveVal(FALSE)
 
-
   observe({
     temp <<- reactiveValues(
       model = input$model_name,
@@ -173,53 +232,55 @@ server <- function(input, output,session) {
       row = current_row(),
     )
     # print("reached observe")
-    runjs('console.log("reached");console.log(document.getElementById("LLM_prompt").style.backgroundColor);document.getElementById("LLM_prompt").style.backgroundColor = "white";')
-
+    runjs(
+      'console.log("reached");console.log(document.getElementById("LLM_prompt").style.backgroundColor);document.getElementById("LLM_prompt").style.backgroundColor = "white";'
+    )
   })
-
 
   observe({
     req(input$file1)
 
-    data <- read.csv(input$file1$datapath,
-                     header = input$header)
+    data <- read.csv(input$file1$datapath, header = input$header)
     current_data(data)
-    updateSelectInput(session, "abstract_col",choices = names(data))
+    updateSelectInput(session, "abstract_col", choices = names(data))
     updateSelectInput(session, "selected_vars", choices = names(data))
-    updateSelectInput(session,"var_llm", choices = grep("_llm$", names(data),value = T))
-
+    updateSelectInput(
+      session,
+      "var_llm",
+      choices = grep("_llm$", names(data), value = T)
+    )
   })
-
 
   # Display selected data
   output$selected_data <- renderDT({
     req(current_data(), input$selected_vars)
     df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
-    datatable(df,
-              options = list(dom = 't', # Only show the table, no controls
-                             ordering = FALSE,
-                             scrolly = '800px',
-                             searchHighlight = TRUE),
-              rownames = FALSE)
+    datatable(
+      df,
+      options = list(
+        dom = 't', # Only show the table, no controls
+        ordering = FALSE,
+        scrolly = '800px',
+        searchHighlight = TRUE
+      ),
+      rownames = FALSE
+    )
   })
 
   output$variable_check <- renderText({
-
-    req(current_data(),input$var_llm)
+    req(current_data(), input$var_llm)
 
     paste("Manual Variable:", sub("_llm$", "_manual", input$var_llm))
   })
 
-
   output$check_value <- renderText({
-
-    req(current_data(),input$var_llm)
+    req(current_data(), input$var_llm)
 
     data <- current_data()
 
     current <- current_row()
 
-    check_var <-sub("_llm$", "_manual", input$var_llm)
+    check_var <- sub("_llm$", "_manual", input$var_llm)
 
     if (!check_var %in% names(data)) {
       return("Manual Value: <missing column>")
@@ -227,21 +288,17 @@ server <- function(input, output,session) {
     paste("Manual Value:", data[current, check_var])
   })
 
-
-
   output$check_value <- renderText({
-
-    req(current_data(),input$var_llm)
+    req(current_data(), input$var_llm)
 
     data <- current_data()
 
     current <- current_row()
 
-    check_var <-sub("_llm$", "_manual", input$var_llm)
+    check_var <- sub("_llm$", "_manual", input$var_llm)
 
-    paste("Manual Value:", data[current,check_var])
+    paste("Manual Value:", data[current, check_var])
   })
-
 
   # Navigate to previous row
   observeEvent(input$pre_btn, {
@@ -250,7 +307,6 @@ server <- function(input, output,session) {
     if (current > 1) {
       current_row(current - 1)
     }
-
   })
 
   # Navigate to next row
@@ -262,47 +318,63 @@ server <- function(input, output,session) {
     }
   })
 
-
   # use LLM
 
   observeEvent(input$useLLM, {
-    req(input$useLLM, current_data(),input$LLM_prompt,input$abstract_col,input$extraction_type )
+    req(
+      input$useLLM,
+      current_data(),
+      input$LLM_prompt,
+      input$abstract_col,
+      input$extraction_type
+    )
 
-   # browser()
+    # browser()
 
     df <- current_data()[current_row(), input$abstract_col, drop = FALSE]
 
     current <- current_row()
 
-    if(input$extraction_type == "integer"){
-
-      type_abstract <- type_object("Extraction from abstract.",
-                                   !!input$var_llm := type_integer(input$LLM_prompt,required = FALSE))
-
-    } else if(input$extraction_type == "number"){
-      type_abstract <- type_object("Extraction from abstract.",
-                                   !!input$var_llm := type_number(input$LLM_prompt,required = FALSE))
-    } else if(input$extraction_type == "boolean"){
-      type_abstract <- type_object("Extraction from abstract.",
-                                   !!input$var_llm := type_boolean(input$LLM_prompt,required = FALSE))
-    } else if (input$extraction_type == "string"){
-      type_abstract <- type_object("Extraction from abstract.",
-                                   !!input$var_llm := type_string(input$LLM_prompt,required = FALSE))
+    if (input$extraction_type == "integer") {
+      type_abstract <- type_object(
+        "Extraction from abstract.",
+        !!input$var_llm := type_integer(input$LLM_prompt, required = FALSE)
+      )
+    } else if (input$extraction_type == "number") {
+      type_abstract <- type_object(
+        "Extraction from abstract.",
+        !!input$var_llm := type_number(input$LLM_prompt, required = FALSE)
+      )
+    } else if (input$extraction_type == "boolean") {
+      type_abstract <- type_object(
+        "Extraction from abstract.",
+        !!input$var_llm := type_boolean(input$LLM_prompt, required = FALSE)
+      )
+    } else if (input$extraction_type == "string") {
+      type_abstract <- type_object(
+        "Extraction from abstract.",
+        !!input$var_llm := type_string(input$LLM_prompt, required = FALSE)
+      )
     }
 
     data <- current_data()
 
-    chat <- chat_ollama(model = input$model_name,
-                        seed = 1,
-                        api_args = list(temperature = 0))
-
+    chat <- chat_ollama(
+      model = input$model_name,
+      seed = 1,
+      api_args = list(temperature = 0)
+    )
 
     processed <- lapply(df[[input$abstract_col]], function(abstract) {
       bot <- chat$clone()
       bot$extract_data(abstract, type = type_abstract)
     })
 
-    data[current,input$var_llm]  <-  ifelse(is.null(processed[[1]][[1]]), NA, processed[[1]][[1]])
+    data[current, input$var_llm] <- ifelse(
+      is.null(processed[[1]][[1]]),
+      NA,
+      processed[[1]][[1]]
+    )
 
     current_data(data)
 
@@ -315,48 +387,60 @@ server <- function(input, output,session) {
 
     # browser()
 
-    check_var <-sub("_llm$", "_manual", input$var_llm)
+    check_var <- sub("_llm$", "_manual", input$var_llm)
 
-    correct <- results ==  data[current,check_var]
-
+    correct <- results == data[current, check_var]
 
     # Append the input and output to the log file with a timestamp
-    log_entry <- data.frame(Timestamp = Sys.time(),
-                            abstract = abstract,
-                            model = model,
-                            prompt = user_prompt,
-                            results = results,
-                            correct = correct,
-                            stringsAsFactors = FALSE)
+    log_entry <- data.frame(
+      Timestamp = Sys.time(),
+      abstract = abstract,
+      model = model,
+      prompt = user_prompt,
+      results = results,
+      correct = correct,
+      stringsAsFactors = FALSE
+    )
 
     # color prompt box
     # For this color, I want it to reset back to blank when it proceed to the next row.
 
     # additionally, I want a check box to show the percentage of the correctness for the text later.
 
-    if(is.na(data[current,check_var])){
-
+    if (is.na(data[current, check_var])) {
       showNotification("Manual extraction value missing.")
-    } else if(ifelse(is.na(results ==  data[current,check_var]),FALSE,results ==  data[current,check_var])) {
-      runjs('document.getElementById("LLM_prompt").style.backgroundColor = "lightgreen";')
+    } else if (
+      ifelse(
+        is.na(results == data[current, check_var]),
+        FALSE,
+        results == data[current, check_var]
+      )
+    ) {
+      runjs(
+        'document.getElementById("LLM_prompt").style.backgroundColor = "lightgreen";'
+      )
     } else {
       # Change background color to red
-      runjs('document.getElementById("LLM_prompt").style.backgroundColor = "lightcoral";')
+      runjs(
+        'document.getElementById("LLM_prompt").style.backgroundColor = "lightcoral";'
+      )
     }
 
-
-    write.table(log_entry, temp_log_file, sep = ",", append = TRUE,
-                col.names = !file.exists(temp_log_file), row.names = FALSE)
-
+    write.table(
+      log_entry,
+      temp_log_file,
+      sep = ",",
+      append = TRUE,
+      col.names = !file.exists(temp_log_file),
+      row.names = FALSE
+    )
   })
-
 
   # Display current row indicator
   output$row_indicator <- renderText({
     req(current_data())
     sprintf("Row %d of %d", current_row(), nrow(current_data()))
   })
-
 
   # Downloadable csv of selected dataset
   volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
@@ -367,9 +451,21 @@ server <- function(input, output,session) {
     fileinfo <- parseSavePath(volumes, input$saveFile)
 
     if (nrow(fileinfo) > 0) {
-      filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_2",".csv")
+      filepath <- paste0(
+        fileinfo$datapath,
+        "_",
+        Sys.Date(),
+        "_data_step_2",
+        ".csv"
+      )
       if (!grepl("\\.csv$", filepath)) {
-        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_2",".csv")  # Ensure .csv extension
+        filepath <- paste0(
+          fileinfo$datapath,
+          "_",
+          Sys.Date(),
+          "_data_step_2",
+          ".csv"
+        ) # Ensure .csv extension
       }
       write.csv(current_data(), filepath, row.names = FALSE)
       showNotification(paste("File saved to:", filepath), type = "message")
@@ -378,14 +474,16 @@ server <- function(input, output,session) {
   # Register a session end callback to move the log file
   session$onSessionEnded(function() {
     # Define the final log file path
-    final_log_file <- file.path(log_dir, paste0("user_log_", Sys.time(), ".csv"))
+    final_log_file <- file.path(
+      log_dir,
+      paste0("user_log_", Sys.time(), ".csv")
+    )
 
     # Move the temporary log file to the final destination
     if (file.exists(temp_log_file)) {
       file.rename(temp_log_file, final_log_file)
     }
   })
-
 
   output$download_sample <- downloadHandler(
     filename = function() {
@@ -398,12 +496,7 @@ server <- function(input, output,session) {
       GET(url, write_disk(file, overwrite = TRUE))
     }
   )
-
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
-
-
-

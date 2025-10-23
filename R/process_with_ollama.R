@@ -31,12 +31,10 @@
 #' age_mean_llm = ellmer::type_number("Find the average age of the study cohort",required = FALSE),
 #' age_median_llm = ellmer::type_number("Find the median age of the study cohort",required = FALSE),
 #' )
-#'
-#'
 #' \dontrun{
 #' process_with_ollama()
 #' }
-#'
+#' @return Returns a data.frame with results and time.
 #' @export
 process_with_ollama <- function(
   input,

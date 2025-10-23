@@ -10,8 +10,11 @@
 #'
 #' @param list_vars a vector of data elements you want to extract. i.e. c("no_participants,"no_female","..")
 #'
-#' @return new dataset with additional empty columns
+#' @examples
+#' add_predefined_vars(abstracts,
+#'                    c("no_participants", "no_aki", "age_mean", "age_sd"))
 #'
+#' @return new dataset with additional empty columns
 #' @export
 add_predefined_vars <- function(data, list_vars) {
   if (is.null(data)) {
@@ -37,6 +40,10 @@ add_predefined_vars <- function(data, list_vars) {
 #'
 #' @param percentage percentage of separation training sets. If percentage set to be 0.1, 10% of the data will be the training set and 90% of the data will be testing set.
 #'
+#' @examples
+#' separate_training(abstracts, percentage = 0.4)
+#'
+#' @returns A list with two the train and test data.frames.
 #' @export
 separate_training <- function(data, percentage = 0.1) {
   # Read CSV file
@@ -64,8 +71,6 @@ separate_training <- function(data, percentage = 0.1) {
 #'
 #' @returns a csv file saved in the metaextroctor_process_data file named training_stage_0_data.csv
 #' @export
-#'
-#'
 save_training_data <- function(training_abs) {
   # check to see if the folder exist or not
 
@@ -90,7 +95,6 @@ save_training_data <- function(training_abs) {
 #'
 #' @returns a csv file saved in the metaextroctor_process_data file named training_stage_0_data.csv
 #' @export
-#'
 save_testing_data <- function(testing_abs) {
   # check to see if the folder exist or not
 

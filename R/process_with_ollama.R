@@ -1,6 +1,5 @@
 # Batch text processing for extraction -------------------------------------------------------------
 
-
 #' @title process_with_ollama
 #'
 #' @description A function that batch process data extraction from text.
@@ -39,9 +38,13 @@
 #' }
 #'
 
-process_with_ollama <- function(input,model = "llama3.1:8b", type_abstract,i, abstract_col) {
-
-
+process_with_ollama <- function(
+  input,
+  model = "llama3.1:8b",
+  type_abstract,
+  i,
+  abstract_col
+) {
   input <- input |>
     select(-ends_with("llm"))
 
@@ -51,8 +54,11 @@ process_with_ollama <- function(input,model = "llama3.1:8b", type_abstract,i, ab
   }
 
   if (!abstract_col %in% colnames(input)) {
-    stop(sprintf("Column '%s' not found in the data frame. Available columns: %s",
-                 abstract_col, paste(colnames(input), collapse = ", ")))
+    stop(sprintf(
+      "Column '%s' not found in the data frame. Available columns: %s",
+      abstract_col,
+      paste(colnames(input), collapse = ", ")
+    ))
   }
 
   result_df <- input
@@ -61,39 +67,48 @@ process_with_ollama <- function(input,model = "llama3.1:8b", type_abstract,i, ab
   result_df[[abstract_col]] <- as.character(result_df[[abstract_col]])
   result_df[[abstract_col]][is.na(result_df[[abstract_col]])] <- ""
 
-  if(missing(i)) i <- 1:nrow(input)
+  if (missing(i)) {
+    i <- 1:nrow(input)
+  }
 
-  chat <- chat_ollama(model = model,
-                      seed = 1,
-                      api_args = list(temperature = 0))
+  chat <- chat_ollama(model = model, seed = 1, api_args = list(temperature = 0))
   start <- Sys.time()
 
-  results <- list()  # Collect all results here
+  results <- list() # Collect all results here
   for (num in i) {
     cli::cli_alert(sprintf("Processing abstract #%d", num))
     # Get the abstract text directly
     abstract_text <- result_df[[abstract_col]][num]
     # Skip if abstract is too short (optional)
     if (nchar(abstract_text) < 10) {
-      cli::cli_alert_warning(sprintf("Abstract #%d is too short, skipping", num))
+      cli::cli_alert_warning(sprintf(
+        "Abstract #%d is too short, skipping",
+        num
+      ))
       next
     }
 
-    tryCatch({
-      # Create a new chat instance for each abstract
-      bot <- chat$clone()
-      # Extract data and capture the result
-      result <- bot$extract_data(abstract_text, type = type_abstract)
+    tryCatch(
+      {
+        # Create a new chat instance for each abstract
+        bot <- chat$clone()
+        # Extract data and capture the result
+        result <- bot$extract_data(abstract_text, type = type_abstract)
 
-      # Store the result with the index as key
-      results[[as.character(num)]] <- result
-
-    }, error = function(e) {
-      # Add error handling
-      cli::cli_alert_danger(sprintf("Error processing abstract #%d: %s", num, e$message))
-      # For errors, store NULL (we'll handle it later)
-      results[[as.character(num)]] <- NULL
-    })
+        # Store the result with the index as key
+        results[[as.character(num)]] <- result
+      },
+      error = function(e) {
+        # Add error handling
+        cli::cli_alert_danger(sprintf(
+          "Error processing abstract #%d: %s",
+          num,
+          e$message
+        ))
+        # For errors, store NULL (we'll handle it later)
+        results[[as.character(num)]] <- NULL
+      }
+    )
   }
 
   create_empty_row <- function(template_df) {
@@ -132,10 +147,8 @@ process_with_ollama <- function(input,model = "llama3.1:8b", type_abstract,i, ab
 
   processed <- bind_rows(results_processed)
 
-
   # Log processing information
-  message(sprintf("Started with %d abstracts",
-                  length(i)))
+  message(sprintf("Started with %d abstracts", length(i)))
 
   end <- Sys.time()
 
@@ -143,5 +156,3 @@ process_with_ollama <- function(input,model = "llama3.1:8b", type_abstract,i, ab
 
   return(list(data, time = end - start))
 }
-
-

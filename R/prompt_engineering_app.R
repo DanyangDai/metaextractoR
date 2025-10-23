@@ -11,8 +11,7 @@
 #' }
 #'
 #' @export
-prompt_engineering_app <- function(){
-
+prompt_engineering_app <- function() {
   app_dir <- system.file("shiny-app2/app.R", package = "metaextractoR")
 
   shiny::runApp(app_dir, display.mode = "normal")

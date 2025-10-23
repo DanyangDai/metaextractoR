@@ -3,7 +3,7 @@
 \docType{data}
 \name{abstracts}
 \alias{abstracts}
-\title{Sample Dataset: abstracts}
+\title{Sample abstracts}
 \format{
 A data frame with 20 rows and 16 variables:
 \describe{

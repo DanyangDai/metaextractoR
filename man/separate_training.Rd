@@ -9,7 +9,7 @@ separate_training(data, percentage = 0.1)
 \arguments{
 \item{data}{The csv file contains abstracts with}
 
-\item{percentage}{percentage of separation training sets.}
+\item{percentage}{percentage of separation training sets. If percentage set to be 0.1, 10% of the data will be the training set and 90% of the data will be testing set.}
 }
 \description{
 This function will separate the abstracts into training and testing sets.

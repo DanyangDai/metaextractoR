@@ -3,6 +3,7 @@
 export(add_predefined_vars)
 export(glance_manual_app)
 export(manual_validation_app)
+export(process_with_ollama)
 export(prompt_engineering_app)
 export(save_testing_data)
 export(save_training_data)

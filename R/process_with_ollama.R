@@ -37,7 +37,7 @@
 #' process_with_ollama()
 #' }
 #'
-
+#' @export
 process_with_ollama <- function(
   input,
   model = "llama3.1:8b",

@@ -132,3 +132,33 @@ To load the `glance_manual_app()` run code.
 ``` r
 glance_manual_app()
 ```
+
+![](man/figures/app1.gif)
+
+To see more detailed usage of this `glance_manual_app()`, see YouTube
+video:
+
+### 5. `prompt_engineering_app()`: prompt enginnering and model selection
+
+Once the manual extraction is completed with the `glance_manual_app()`,
+the testing data should be saved. The saved data should be used in the
+prompt engineering Shinyapp.
+
+![](man/figures/app2.gif)
+
+To see more detailed usage of this `prompt_engineering_app()`, see
+YouTube video:
+
+Each of the tested prompt and model is recorded and saved as a csv file
+in the `log_files` folder.
+
+### 6. Batch process with `process_with_ollama`
+
+Once the most ideal prompt and model is selected, use the
+`process_with_ollama` for the testing with LLMs to extract the data
+elements.
+
+### 7. Manual check with `manual_validation_app()`
+
+Once LLM extraction on the testing set been completed, use the
+`manual_validation_app()` to manually check the LLM extraction values.

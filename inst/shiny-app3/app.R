@@ -626,13 +626,10 @@ server <- function(input, output, session) {
 
   output$download_sample <- downloadHandler(
     filename = function() {
-      "sample_data_app1.csv"
+      "sample_data_app3.csv"
     },
     content = function(file) {
-      # GitHub raw file URL
-      url <- "https://github.com/DanyangDai/metaextractoR/blob/main/sample_data/app_3.csv"
-      # Download file
-      GET(url, write_disk(file, overwrite = TRUE))
+      write.csv(metaextractoR::app_3, file, row.names = FALSE)
     }
   )
 

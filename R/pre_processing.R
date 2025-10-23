@@ -13,23 +13,19 @@
 #' @return new dataset with additional empty columns
 #'
 #' @export
-add_predefined_vars <- function(data,list_vars){
-
-  if (is.null(data)){
+add_predefined_vars <- function(data, list_vars) {
+  if (is.null(data)) {
     warning("Please check that you have supplied a valid dataset")
-  }
-  else if (is.null(list_vars)) {
+  } else if (is.null(list_vars)) {
     warning("Make sure that you put in a list of variables")
+  } else {
+    new_col_names <- c(paste0(list_vars, "_manual"), paste0(list_vars, "_llm"))
+
+    data[new_col_names] <- NA
+
+    return(data)
   }
-  else{
-  new_col_names <- c(paste0(list_vars, "_manual"), paste0(list_vars, "_llm"))
-
-  data[new_col_names] <- NA
-
-  return(data)}
-
 }
-
 
 
 #' @title separate_training
@@ -42,9 +38,7 @@ add_predefined_vars <- function(data,list_vars){
 #' @param percentage percentage of separation training sets. If percentage set to be 0.1, 10% of the data will be the training set and 90% of the data will be testing set.
 #'
 #' @export
-separate_training <- function(data, percentage = 0.1){
-
-
+separate_training <- function(data, percentage = 0.1) {
   # Read CSV file
   # Create a random index for splitting
   sample_size <- floor(nrow(data) * percentage)
@@ -55,7 +49,6 @@ separate_training <- function(data, percentage = 0.1){
   train_df <- data[test_indices, ]
 
   return(list(train = train_df, test = test_df))
-
 }
 
 #' @title save_training_data
@@ -74,7 +67,6 @@ separate_training <- function(data, percentage = 0.1){
 #'
 #'
 save_training_data <- function(training_abs) {
-
   # check to see if the folder exist or not
 
   dir.create("metaextroctor_data", recursive = TRUE)
@@ -83,8 +75,7 @@ save_training_data <- function(training_abs) {
 
   file_path <- file.path("metaextroctor_data/training_stage_0_data.csv")
 
-  write.csv(training_abs, file = file_path,row.names = F)
-
+  write.csv(training_abs, file = file_path, row.names = F)
 }
 
 #' @title save_testing_data
@@ -101,7 +92,6 @@ save_training_data <- function(training_abs) {
 #' @export
 #'
 save_testing_data <- function(testing_abs) {
-
   # check to see if the folder exist or not
 
   dir.create("metaextroctor_data", recursive = TRUE)
@@ -110,7 +100,5 @@ save_testing_data <- function(testing_abs) {
 
   file_path <- file.path("metaextroctor_data/testing_stage_0_data.csv")
 
-  write.csv(testing_abs, file = file_path,row.names = F)
-
+  write.csv(testing_abs, file = file_path, row.names = F)
 }
-

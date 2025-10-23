@@ -1,4 +1,4 @@
-#' Sample Dataset: abstracts
+#' Sample abstracts
 #'
 #' This dataset includes sample abstracts downloaded from one of my Covidence project.
 #' Pre-processing was done by running the clean_name function from janitor package.

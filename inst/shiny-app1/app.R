@@ -1,4 +1,3 @@
-
 library(shiny)
 library(bslib)
 library(DT)
@@ -8,7 +7,8 @@ library(shinyFiles)
 
 # CSS ----------------------------------------------------------------------
 
-checkbox_css <- HTML("
+checkbox_css <- HTML(
+  "
   .checkbox-group {
     width: 100%;
     padding: 10px;
@@ -41,12 +41,11 @@ checkbox_css <- HTML("
     height: 30px;
     padding: 2px 8px;
   }
-")
-
+"
+)
 
 
 # UI ----------------------------------------------------------------------
-
 
 ui <- page_sidebar(
   title = tagList(icon("flask"), "LLM Systematic Review"),
@@ -58,9 +57,10 @@ ui <- page_sidebar(
     primary = "#2C7BE5"
   ),
   head_content = tags$head(
-  #  includeCSS("inst/www/checkbox.css"),
+    #  includeCSS("inst/www/checkbox.css"),
     tags$link(rel = "icon", type = "image/png", href = "www/favicon.png"),
-    tags$style(HTML("
+    tags$style(HTML(
+      "
  .sidebar {
  padding-top: 0.75rem;
  }
@@ -90,32 +90,60 @@ ui <- page_sidebar(
  .btn-outline-secondary {
  border-color: #ced4da;
  }
- "))
+ "
+    ))
   ),
   sidebar = sidebar(
     width = 360,
     downloadButton("download_sample", "Download Sample Data"),
-    h5(class = "mt-2 mb-2", "Upload your CSV"), fileInput( "file1", label = NULL, multiple = FALSE, accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"), buttonLabel = "Browse...", placeholder = "No file selected" ), div(class = "help-text mb-3", "CSV should contain your abstracts and any other relevant fields." ),  tags$hr(),  h6(class = "mt-2 mb-1", "Options"), checkboxInput("header", "CSV has a header row", TRUE),  selectizeInput( "selected_vars", "Columns to display", choices = NULL, multiple = TRUE, options = list(placeholder = "Start typing to choose columns...") ),  tags$hr(class = "mb-3")
+    h5(class = "mt-2 mb-2", "Upload your CSV"),
+    fileInput(
+      "file1",
+      label = NULL,
+      multiple = FALSE,
+      accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv"),
+      buttonLabel = "Browse...",
+      placeholder = "No file selected"
     ),
+    div(
+      class = "help-text mb-3",
+      "Your CSV file should contain a column of abstracts and other relevant information. Any information that should be manually entered should be in a new column with the suffix \"_manual\""
+    ),
+    tags$hr(),
+    h6(class = "mt-2 mb-1", "Options"),
+    checkboxInput("header", "CSV has a header row", TRUE),
+    selectizeInput(
+      "selected_vars",
+      "Columns to display",
+      choices = NULL,
+      multiple = TRUE,
+      options = list(placeholder = "Start typing to choose columns...")
+    ),
+    tags$hr(class = "mb-3"),
+    actionButton("show_info", tags$span(icon("circle-info"), "Show Info"))
+  ),
   div(
     class = "d-flex justify-content-end mb-3",
     shinySaveButton("saveFile", "Save CSV", "Save as...")
   ),
   card(
     card_header(
-      div(class = "d-flex justify-content-between align-items-center w-100",
-          div("Data Preview"),
-          div(textOutput("row_indicator", inline = TRUE), class = "muted")
+      div(
+        class = "d-flex justify-content-between align-items-center w-100",
+        div("Data Preview"),
+        div(textOutput("row_indicator", inline = TRUE), class = "muted")
       )
     ),
-    div(class = "data-height",
-        style = "height: 500px; overflow-y: auto; margin-top: 10px;",
-        DTOutput("selected_data")
+    div(
+      class = "data-height",
+      style = "height: 500px; overflow-y: auto; margin-top: 10px;",
+      DTOutput("selected_data")
     )
   ),
   card(
     class = "mt-3",
     card_header("Manual Extraction"),
+    htmlOutput("manual_entry_info"),
     DTOutput("add_manual_var")
   ),
   div(
@@ -125,16 +153,22 @@ ui <- page_sidebar(
         width = 6,
         div(
           class = "d-grid",
-          actionButton("pre_btn", label = tagList(icon("arrow-left"), "Previous"),
-                       class = "btn btn-outline-secondary")
+          actionButton(
+            "pre_btn",
+            label = tagList(icon("arrow-left"), "Previous"),
+            class = "btn btn-outline-secondary"
+          )
         )
       ),
       column(
         width = 6,
         div(
           class = "d-grid",
-          actionButton("next_btn", label = tagList("Next", icon("arrow-right")),
-                       class = "btn btn-primary")
+          actionButton(
+            "next_btn",
+            label = tagList("Next", icon("arrow-right")),
+            class = "btn btn-primary"
+          )
         )
       )
     )
@@ -143,9 +177,7 @@ ui <- page_sidebar(
 
 # SERVER ------------------------------------------------------------------
 
-
 server <- function(input, output, session) {
-
   #set_logging_session()
 
   current_row <- reactiveVal(1)
@@ -171,14 +203,12 @@ server <- function(input, output, session) {
   observe({
     req(input$file1)
 
-    data <- read.csv(input$file1$datapath,
-                     header = input$header)
+    data <- read.csv(input$file1$datapath, header = input$header)
     current_data(data)
 
-    updateSelectInput(session, "abstract_col",choices = names(data))
+    updateSelectInput(session, "abstract_col", choices = names(data))
     updateSelectInput(session, "selected_vars", choices = names(data))
-
-    })
+  })
   # Reactive value for the sampled data
   # sampled_data <- reactiveVal()
   #
@@ -225,74 +255,90 @@ server <- function(input, output, session) {
   # }
   #
 
-
   output$download_sample <- downloadHandler(
     filename = function() {
       "sample_data_app1.csv"
     },
     content = function(file) {
-      # GitHub raw file URL
-      url <- "https://github.com/DanyangDai/metaextractoR/blob/main/sample_data/training_stage_0_data.csv"
-      # Download file
-      GET(url, write_disk(file, overwrite = TRUE))
+      write.csv(metaextractoR::training_stage_0_data, file, row.names = FALSE)
     }
   )
   # Display selected data
   output$selected_data <- renderDT({
     req(current_data(), input$selected_vars)
     df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
-    datatable(df,
-              options = list(dom = 't', # Only show the table, no controls
-                             ordering = FALSE,
-                             scrolly = '800px',
-                             searchHighlight = TRUE),
-              rownames = FALSE)
+    datatable(
+      df,
+      options = list(
+        dom = 't', # Only show the table, no controls
+        ordering = FALSE,
+        scrolly = '800px',
+        searchHighlight = TRUE
+      ),
+      rownames = FALSE
+    )
   })
 
-
-
-
-  checkman_long <- reactive({
-
-    #browser()
-
+  check_manual_long <- reactive({
     req(current_data())
 
     result <- current_data()
 
-    col_man <- grep("_manual$", names(result[1,]))
+    col_man <- grep("_manual$", names(result[1, ]))
 
-    result[current_row(),col_man,drop = FALSE] |>
-      pivot_longer(cols = ends_with("_manual"),
-                   names_to = "Manual_variable",
-                   values_to = "Manual_value",
-                   values_transform =list(Value = as.character)) |>
-      arrange(Manual_variable)
+    result[current_row(), col_man, drop = FALSE] |>
+      pivot_longer(
+        cols = ends_with("_manual"),
+        names_to = "Manual_variable",
+        values_to = "Manual_value",
+        values_transform = list(Value = as.character)
+      )
+  })
 
+  output$manual_entry_info <- renderUI({
+    if(nrow(check_manual_long())) {
+      span("Double click on the cell under \"Manual_value\" to enter the value.", class = "help-text mb-3")
+    }
+  })
+
+  observeEvent(input$show_info, {
+    showModal(modalDialog(
+      title = "About this app",
+      "This app is designed for users to upload the data and iterate over abstracts. Users can also optionally enter values for manual extraction of values.",
+      footer = tagList(
+        modalButton("Dismiss")
+      )
+    ))
   })
 
   output$add_manual_var <- renderDT({
     req(current_data())
-    datatable(checkman_long(),
-              editable = TRUE,
-              options = list(dom = 't', # Only show the table, no controls
-                             ordering = FALSE,
-                             scrolly = '800px',
-                             searchHighlight = TRUE),
-              rownames = FALSE)
+    datatable(
+      check_manual_long(),
+      editable = TRUE,
+      options = list(
+        dom = 't', # Only show the table, no controls
+        ordering = FALSE,
+        scrolly = '800px',
+        searchHighlight = TRUE
+      ),
+      rownames = FALSE
+    )
   })
 
   # Observe edits and update the data
   observeEvent(input$add_manual_var_cell_edit, {
     # browser()
-    req(current_data,current_row)
+    req(current_data, current_row)
     info <- input$add_manual_var_cell_edit
     # str(info)
     new_data <- current_data()
-    new_data[current_row(), checkman_long()$Manual_variable[info[["row"]]]] <- info$value
+    new_data[
+      current_row(),
+      check_manual_long()$Manual_variable[info[["row"]]]
+    ] <- info$value
     current_data(new_data)
   })
-
 
   # Navigate to next row
   observeEvent(input$next_btn, {
@@ -307,7 +353,7 @@ server <- function(input, output, session) {
         current_row(1)
       }
     }
-    updateTextInput(session, "new_var_value",value = "")
+    updateTextInput(session, "new_var_value", value = "")
   })
 
   # Navigate to previouse row
@@ -324,8 +370,7 @@ server <- function(input, output, session) {
         current_row(nrow(sample_result))
       }
     }
-    updateTextInput(session, "new_var_value",value = "")
-
+    updateTextInput(session, "new_var_value", value = "")
   })
 
   # Display current row indicator
@@ -343,14 +388,24 @@ server <- function(input, output, session) {
   shinyFileSave(input, "saveFile", roots = volumes, session = session)
 
   observeEvent(input$saveFile, {
-
-
     fileinfo <- parseSavePath(volumes, input$saveFile)
 
     if (nrow(fileinfo) > 0) {
-      filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_1",".csv")
+      filepath <- paste0(
+        fileinfo$datapath,
+        "_",
+        Sys.Date(),
+        "_data_step_1",
+        ".csv"
+      )
       if (!grepl("\\.csv$", filepath)) {
-        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_1",".csv")  # Ensure .csv extension
+        filepath <- paste0(
+          fileinfo$datapath,
+          "_",
+          Sys.Date(),
+          "_data_step_1",
+          ".csv"
+        ) # Ensure .csv extension
       }
       write.csv(current_data(), filepath, row.names = FALSE)
       showNotification(paste("File saved to:", filepath), type = "message")
@@ -363,10 +418,7 @@ server <- function(input, output, session) {
       sample_result$info
     }
   })
-
 }
 
 # Run the app
 shinyApp(ui = ui, server = server)
-
-

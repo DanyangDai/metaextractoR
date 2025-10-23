@@ -16,7 +16,8 @@ ui <- page_fluid(
   ),
   useShinyjs(),
   tags$head(
-    tags$style(HTML("
+    tags$style(HTML(
+      "
       /* Overall styling */
       body { background-color: #f8f9fa; }
       .container-fluid { max-width: 1400px; margin: 0 auto; padding: 20px; }
@@ -172,7 +173,8 @@ ui <- page_fluid(
         margin-left: 5px;
         cursor: help;
       }
-    "))
+    "
+    ))
   ),
 
   div(class = "app-title", icon("table"), "CSV Data Viewer and Editor"),
@@ -184,32 +186,64 @@ ui <- page_fluid(
         class = "mb-3",
         card_header(div(icon("upload"), "Upload & Navigation")),
         card_body(
-          div(class = "upload-section",
-              div(style = "flex-grow: 1;",
-                  fileInput("file", "Choose CSV File", accept = ".csv", width = "100%",
-                            buttonLabel = "Browse...", placeholder = "No file selected")
-              ),
-              downloadButton("download_sample", "Sample", class = "btn-sm",
-                             title = "Download a sample CSV file")
+          div(
+            class = "upload-section",
+            div(
+              style = "flex-grow: 1;",
+              fileInput(
+                "file",
+                "Choose CSV File",
+                accept = ".csv",
+                width = "100%",
+                buttonLabel = "Browse...",
+                placeholder = "No file selected"
+              )
+            ),
+            downloadButton(
+              "download_sample",
+              "Sample",
+              class = "btn-sm",
+              title = "Download a sample CSV file"
+            )
           ),
 
           hr(style = "margin: 1rem 0;"),
 
           div(class = "section-title", "Row Navigation"),
-          div(class = "nav-row",
-              div(style = "width: 30%;",
-                  div(class = "compact-input",
-                      numericInput("current_row", "Row:", 1, min = 1, step = 1, width = "100%")
-                  )
-              ),
-              div(style = "width: 35%;",
-                  actionButton("prev_row", "Previous", class = "btn btn-secondary w-100 compact-btn",
-                               icon = icon("arrow-left"))
-              ),
-              div(style = "width: 35%;",
-                  actionButton("next_row", "Next", class = "btn btn-secondary w-100 compact-btn",
-                               icon = icon("arrow-right"))
+          div(
+            class = "nav-row",
+            div(
+              style = "width: 30%;",
+              div(
+                class = "compact-input",
+                numericInput(
+                  "current_row",
+                  "Row:",
+                  1,
+                  min = 1,
+                  step = 1,
+                  width = "100%"
+                )
               )
+            ),
+            div(
+              style = "width: 35%;",
+              actionButton(
+                "prev_row",
+                "Previous",
+                class = "btn btn-secondary w-100 compact-btn",
+                icon = icon("arrow-left")
+              )
+            ),
+            div(
+              style = "width: 35%;",
+              actionButton(
+                "next_row",
+                "Next",
+                class = "btn btn-secondary w-100 compact-btn",
+                icon = icon("arrow-right")
+              )
+            )
           ),
           div(class = "nav-info mt-2", textOutput("row_info"))
         )
@@ -232,41 +266,64 @@ ui <- page_fluid(
   card(
     class = "mb-3",
     card_header(
-      div(class = "action-panel",
-          div(class = "action-panel-left",
-              div(icon("wand-magic-sparkles"), "Data Editor"),
-              span(class = "soft-text", "Edit and manage your data values")
+      div(
+        class = "action-panel",
+        div(
+          class = "action-panel-left",
+          div(icon("wand-magic-sparkles"), "Data Editor"),
+          span(class = "soft-text", "Edit and manage your data values")
+        ),
+        div(
+          class = "action-panel-right",
+          actionButton(
+            "copy_values",
+            "Copy LLM to Manual",
+            class = "btn btn-primary btn-sm compact-btn",
+            icon = icon("copy"),
+            title = "Copy all LLM values to manual columns"
           ),
-          div(class = "action-panel-right",
-              actionButton("copy_values", "Copy LLM to Manual", class = "btn btn-primary btn-sm compact-btn",
-                           icon = icon("copy"), title = "Copy all LLM values to manual columns"),
-              shinySaveButton("saveFile", "Save CSV", "Save as...", icon = icon("download"),
-                              class = "btn-primary btn-sm compact-btn")
+          shinySaveButton(
+            "saveFile",
+            "Save CSV",
+            "Save as...",
+            icon = icon("download"),
+            class = "btn-primary btn-sm compact-btn"
           )
+        )
       )
     ),
     card_body(
       fluidRow(
         column(
           6,
-          div(class = "editor-column",
-              div(class = "section-title",
-                  "Variables ending with _llm",
-                  span(class = "tooltip-icon", icon("circle-info"),
-                       title = "These values are generated by the LLM and cannot be edited directly")
-              ),
-              div(class = "table-wrap", DTOutput("llm_table"))
+          div(
+            class = "editor-column",
+            div(
+              class = "section-title",
+              "Variables ending with _llm",
+              span(
+                class = "tooltip-icon",
+                icon("circle-info"),
+                title = "These values are generated by the LLM and cannot be edited directly"
+              )
+            ),
+            div(class = "table-wrap", DTOutput("llm_table"))
           )
         ),
         column(
           6,
-          div(class = "editor-column",
-              div(class = "section-title",
-                  "Variables ending with _manual (Editable)",
-                  span(class = "tooltip-icon", icon("circle-info"),
-                       title = "You can edit these values directly by clicking on cells")
-              ),
-              div(class = "table-wrap", DTOutput("manual_table"))
+          div(
+            class = "editor-column",
+            div(
+              class = "section-title",
+              "Variables ending with _manual (Editable)",
+              span(
+                class = "tooltip-icon",
+                icon("circle-info"),
+                title = "You can edit these values directly by clicking on cells"
+              )
+            ),
+            div(class = "table-wrap", DTOutput("manual_table"))
           )
         )
       ),
@@ -276,12 +333,9 @@ ui <- page_fluid(
 )
 
 
-
 # SERVER ------------------------------------------------------------------
 
 server <- function(input, output, session) {
-
-
   # Initialize reactive values
   vals <- reactiveValues(
     data = NULL,
@@ -291,7 +345,6 @@ server <- function(input, output, session) {
     total_rows = 0,
     other_columns = NULL
   )
-
 
   # Downloadable csv of selected dataset
   volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
@@ -327,11 +380,13 @@ server <- function(input, output, session) {
   output$other_columns_selector <- renderUI({
     req(vals$other_columns)
 
-    selectInput("selected_other_columns",
-                "Select columns to display:",
-                choices = vals$other_columns,
-                multiple = TRUE,
-                width = "100%")
+    selectInput(
+      "selected_other_columns",
+      "Select columns to display:",
+      choices = vals$other_columns,
+      multiple = TRUE,
+      width = "100%"
+    )
   })
 
   # Display other columns table
@@ -344,17 +399,26 @@ server <- function(input, output, session) {
 
     if (input$current_row <= vals$total_rows) {
       # Select only the columns chosen by the user
-      selected_data <- vals$other_data[input$current_row, input$selected_other_columns, drop = FALSE]
+      selected_data <- vals$other_data[
+        input$current_row,
+        input$selected_other_columns,
+        drop = FALSE
+      ]
 
       # Transpose the data for display
       selected_data_t <- as.data.frame(t(selected_data))
-      selected_data_t <- cbind(Variable = rownames(selected_data_t), Value = selected_data_t[,1])
+      selected_data_t <- cbind(
+        Variable = rownames(selected_data_t),
+        Value = selected_data_t[, 1]
+      )
       rownames(selected_data_t) <- NULL
       colnames(selected_data_t) <- c("Variable", "Value")
 
-      datatable(selected_data_t,
-                options = list(dom = 't', ordering = FALSE, pageLength = 50),
-                rownames = FALSE)
+      datatable(
+        selected_data_t,
+        options = list(dom = 't', ordering = FALSE, pageLength = 50),
+        rownames = FALSE
+      )
     }
   })
 
@@ -390,15 +454,20 @@ server <- function(input, output, session) {
     if (input$current_row <= vals$total_rows) {
       llm_row_data <- vals$llm_data[input$current_row, , drop = FALSE]
       llm_row_data_t <- as.data.frame(t(llm_row_data))
-      llm_row_data_t <- cbind(Variable = rownames(llm_row_data_t), Value = llm_row_data_t[,1])
+      llm_row_data_t <- cbind(
+        Variable = rownames(llm_row_data_t),
+        Value = llm_row_data_t[, 1]
+      )
       rownames(llm_row_data_t) <- NULL
       colnames(llm_row_data_t) <- c("Variable", "Value")
 
-      datatable(llm_row_data_t, options = list(dom = 't', ordering = FALSE, pageLength = 50),
-                rownames = FALSE)
+      datatable(
+        llm_row_data_t,
+        options = list(dom = 't', ordering = FALSE, pageLength = 50),
+        rownames = FALSE
+      )
     }
   })
-
 
   # Display _manual table with editing enabled
   output$manual_table <- renderDT({
@@ -408,14 +477,19 @@ server <- function(input, output, session) {
     if (input$current_row <= vals$total_rows) {
       manual_row_data <- vals$manual_data[input$current_row, , drop = FALSE]
       manual_row_data_t <- as.data.frame(t(manual_row_data))
-      manual_row_data_t <- cbind(Variable = rownames(manual_row_data_t), Value = manual_row_data_t[,1])
+      manual_row_data_t <- cbind(
+        Variable = rownames(manual_row_data_t),
+        Value = manual_row_data_t[, 1]
+      )
       rownames(manual_row_data_t) <- NULL
       colnames(manual_row_data_t) <- c("Variable", "Value")
 
-      datatable(manual_row_data_t,
-                options = list(dom = 't', ordering = FALSE, pageLength = 50),
-                rownames = FALSE,
-                editable = list(target = "cell", disable = list(columns = c(0))))
+      datatable(
+        manual_row_data_t,
+        options = list(dom = 't', ordering = FALSE, pageLength = 50),
+        rownames = FALSE,
+        editable = list(target = "cell", disable = list(columns = c(0)))
+      )
     }
   })
 
@@ -437,23 +511,35 @@ server <- function(input, output, session) {
     if (info$row <= length(manual_col_names)) {
       variable_name <- manual_col_names[info$row]
 
-      check_type <-  vals$manual_data[input$current_row, variable_name]
+      check_type <- vals$manual_data[input$current_row, variable_name]
 
-      if (is.numeric(check_type[[1]])){
-        vals$manual_data[input$current_row, variable_name] <- as.numeric(info$value)
-      } else if (is.character(check_type[[1]])){
+      if (is.numeric(check_type[[1]])) {
+        vals$manual_data[input$current_row, variable_name] <- as.numeric(
+          info$value
+        )
+      } else if (is.character(check_type[[1]])) {
         # Update the value in the original data frame
         validate(
-          need(is.character(check_type[[1]]), "Please check the variable input type to be character")
+          need(
+            is.character(check_type[[1]]),
+            "Please check the variable input type to be character"
+          )
         )
 
-        vals$manual_data[input$current_row, variable_name] <- as.character(info$value)
-      } else if (is.logical(check_type[[1]])){
+        vals$manual_data[input$current_row, variable_name] <- as.character(
+          info$value
+        )
+      } else if (is.logical(check_type[[1]])) {
         validate(
-          need(is.logical(check_type[[1]]), "Please check the variable input type to be logical.")
+          need(
+            is.logical(check_type[[1]]),
+            "Please check the variable input type to be logical."
+          )
         )
 
-        vals$manual_data[input$current_row, variable_name] <- as.logical(info$value)
+        vals$manual_data[input$current_row, variable_name] <- as.logical(
+          info$value
+        )
       } else {
         output$warning_message <- renderText({
           paste("Warning: Please check the input value is consistent.")
@@ -474,19 +560,25 @@ server <- function(input, output, session) {
     for (llm_col in llm_cols) {
       # Generate corresponding _manual column name
       manual_col <- sub("_llm$", "_manual", llm_col)
-      if (is.na( vals$manual_data[current_row, manual_col] )){
+      if (is.na(vals$manual_data[current_row, manual_col])) {
         # Check if the corresponding _manual column exists
         if (manual_col %in% names(vals$manual_data)) {
           # Copy the value
-          vals$manual_data[current_row, manual_col] <- vals$llm_data[current_row, llm_col]
-        }} else {
-          vals$manual_data[current_row, manual_col] <- vals$manual_data[current_row, manual_col]
+          vals$manual_data[current_row, manual_col] <- vals$llm_data[
+            current_row,
+            llm_col
+          ]
         }
+      } else {
+        vals$manual_data[current_row, manual_col] <- vals$manual_data[
+          current_row,
+          manual_col
+        ]
+      }
     }
   })
 
   observeEvent(input$saveFile, {
-
     #browser()
 
     fileinfo <- parseSavePath(volumes, input$saveFile)
@@ -502,19 +594,35 @@ server <- function(input, output, session) {
       data[, col] <- vals$manual_data[, col]
     }
 
-
     if (nrow(fileinfo) > 0) {
-      filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_3",".csv")
+      filepath <- paste0(
+        fileinfo$datapath,
+        "_",
+        Sys.Date(),
+        "_data_step_3",
+        ".csv"
+      )
       if (!grepl("\\.csv$", filepath)) {
-        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_3",".csv")  # Ensure .csv extension
-      } else{
-        filepath <- paste0(fileinfo$datapath, "_",Sys.Date(),"_data_step_3",".csv")
+        filepath <- paste0(
+          fileinfo$datapath,
+          "_",
+          Sys.Date(),
+          "_data_step_3",
+          ".csv"
+        ) # Ensure .csv extension
+      } else {
+        filepath <- paste0(
+          fileinfo$datapath,
+          "_",
+          Sys.Date(),
+          "_data_step_3",
+          ".csv"
+        )
       }
       write.csv(data, filepath, row.names = FALSE)
       showNotification(paste("File saved to:", filepath), type = "message")
     }
   })
-
 
   output$download_sample <- downloadHandler(
     filename = function() {
@@ -537,28 +645,26 @@ server <- function(input, output, session) {
   #   )
   # })
 
-#
-#   # Download handler for the modified data
-#   output$save_data <- downloadHandler(
-#     filename = function() {
-#       paste0("modified_", input$file$name)
-#     },
-#     content = function(file) {
-#       # Reconstruct the full data frame with modifications
-#       data <- vals$data
-#
-#       # Update with modified _manual values
-#       manual_cols <- grep("_manual$", names(data), value = TRUE)
-#       for (col in manual_cols) {
-#         data[, col] <- vals$manual_data[, col]
-#       }
-#
-#       # Write to CSV
-#       write_csv(data, file)
-#     }
-#   )
+  #
+  #   # Download handler for the modified data
+  #   output$save_data <- downloadHandler(
+  #     filename = function() {
+  #       paste0("modified_", input$file$name)
+  #     },
+  #     content = function(file) {
+  #       # Reconstruct the full data frame with modifications
+  #       data <- vals$data
+  #
+  #       # Update with modified _manual values
+  #       manual_cols <- grep("_manual$", names(data), value = TRUE)
+  #       for (col in manual_cols) {
+  #         data[, col] <- vals$manual_data[, col]
+  #       }
+  #
+  #       # Write to CSV
+  #       write_csv(data, file)
+  #     }
+  #   )
 }
 
 shinyApp(ui = ui, server = server)
-
-

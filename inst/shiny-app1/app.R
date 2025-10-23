@@ -6,6 +6,7 @@ library(tidyr)
 library(shinyFiles)
 
 
+
 # CSS ----------------------------------------------------------------------
 
 checkbox_css <- HTML("
@@ -267,7 +268,7 @@ server <- function(input, output, session) {
                    names_to = "Manual_variable",
                    values_to = "Manual_value",
                    values_transform =list(Value = as.character)) |>
-      arrange(Manual_variable)
+      dplyr::arrange(Manual_variable)
 
   })
 

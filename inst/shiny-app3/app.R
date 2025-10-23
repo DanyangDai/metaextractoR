@@ -7,113 +7,274 @@ library(shinyjs)
 # UI ----------------------------------------------------------------------
 
 ui <- page_fluid(
-theme = bs_theme(
- bootswatch = "flatly",
- primary = "#2C7BE5",
- base_font = font_google("Inter"),
- heading_font = font_google("Inter")
- ),
-
+  theme = bs_theme(
+    bootswatch = "flatly",
+    primary = "#2C7BE5",
+    base_font = font_google("Inter"),
+    heading_font = font_google("Inter"),
+    secondary = "#6E84A3"
+  ),
   useShinyjs(),
   tags$head(
     tags$style(HTML("
- .card-header { font-weight: 600; }
- .mb-3 { margin-bottom: 1rem !important; }
- .btn + .btn { margin-left: .5rem; }
- .shiny-input-container { width: 100%; }
- .soft-text { color: #6c757d; font-size: 0.9rem; }
- .table-wrap { height: 50vh; overflow: auto; }
- .table-wrap-tall { height: 60vh; overflow: auto; }
- "))
+      /* Overall styling */
+      body { background-color: #f8f9fa; }
+      .container-fluid { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+      /* Card styling */
+      .card { border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border: none; margin-bottom: 20px; }
+      .card-header {
+        font-weight: 600;
+        padding: 0.75rem 1.25rem;
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        border-top-left-radius: 8px !important;
+        border-top-right-radius: 8px !important;
+      }
+      .card-body { padding: 1rem; background-color: #fff; }
+
+      /* Spacing */
+      .mb-3 { margin-bottom: 1rem !important; }
+      .btn + .btn { margin-left: .5rem; }
+      .shiny-input-container { width: 100%; margin-bottom: 0.75rem; }
+
+      /* Text styling */
+      .soft-text { color: #6c757d; font-size: 0.85rem; }
+      .app-title {
+        font-size: 1.75rem;
+        margin: 0 0 1.5rem 0;
+        color: #3a3f51;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .app-title i { color: #2C7BE5; }
+      .section-title { font-weight: 600; margin-bottom: 10px; color: #3a3f51; }
+
+      /* Tables */
+      .table-wrap {
+        height: 35vh; /* Increased height for Other Columns panel */
+        overflow: auto;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background: #fcfcfc;
+      }
+      .dataTables_wrapper { padding: 10px; }
+      table.dataTable { border-collapse: collapse !important; }
+      table.dataTable thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6 !important;
+        font-weight: 600;
+      }
+
+      /* Inputs */
+      .compact-input .form-control {
+        height: 38px;
+        padding: 0.375rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #d1d9e6;
+      }
+      .compact-input .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(44, 123, 229, 0.25);
+        border-color: #2C7BE5;
+      }
+
+      /* Buttons */
+      .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      .btn-primary {
+        background-color: #2C7BE5;
+        border-color: #2C7BE5;
+      }
+      .btn-primary:hover {
+        background-color: #1a68d1;
+        border-color: #1a68d1;
+      }
+      .btn-secondary {
+        background-color: #95aac9;
+        border-color: #95aac9;
+      }
+      .btn-secondary:hover {
+        background-color: #6E84A3;
+        border-color: #6E84A3;
+      }
+      .compact-btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      /* Navigation */
+      .nav-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .nav-info {
+        background-color: #f8f9fa;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        color: #495057;
+      }
+
+      /* Action panel */
+      .action-panel {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+      }
+      .action-panel-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .action-panel-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* File upload */
+      .upload-section {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .upload-section .shiny-input-container {
+        margin-bottom: 0;
+        flex-grow: 1;
+      }
+
+      /* Other columns panel */
+      #other_columns_selector {
+        margin-bottom: 15px;
+      }
+
+      /* Editor section */
+      .editor-tables {
+        display: flex;
+        gap: 20px;
+      }
+      .editor-column {
+        flex: 1;
+      }
+
+      /* Tooltips */
+      .tooltip-icon {
+        color: #95aac9;
+        margin-left: 5px;
+        cursor: help;
+      }
+    "))
   ),
 
-  titlePanel(div(icon("table"), "CSV Data Viewer and Editor")),
+  div(class = "app-title", icon("table"), "CSV Data Viewer and Editor"),
 
-  card(
-    class = "mb-3",
-    card_header(div(icon("upload"), "Upload CSV File")),
-    downloadButton("download_sample", "Download Sample Data from GitHub"),
-    card_body(
-      fileInput("file", "Choose CSV File", accept = ".csv", width = "100%"),
-      div(class = "soft-text", "Upload a CSV file to begin. Large files may take a moment to load.")
-    )
-  ),
-
-  card(
-    class = "mb-3",
-    card_header(div(icon("columns"), "Other Columns Display")),
-    card_body(
-      uiOutput("other_columns_selector"),
-      div(class = "soft-text", "Select which additional columns to show alongside your main tables.")
-    ),
-
-    card_body(
-      div(class = "table-wrap", DTOutput("other_columns_table"))
-    )
-  ),
   fluidRow(
     column(
-      6,
+      3,
       card(
         class = "mb-3",
-        card_header(div(icon("compass"), "Navigation")),
+        card_header(div(icon("upload"), "Upload & Navigation")),
         card_body(
-          fluidRow(
-            column(4, numericInput("current_row", "Current Row:", 1, min = 1, step = 1, width = "100%")),
-            column(4, actionButton("prev_row", "Previous Row", class = "btn btn-secondary w-100", icon = icon("arrow-left"))),
-            column(4, actionButton("next_row", "Next Row", class = "btn btn-secondary w-100", icon = icon("arrow-right")))
+          div(class = "upload-section",
+              div(style = "flex-grow: 1;",
+                  fileInput("file", "Choose CSV File", accept = ".csv", width = "100%",
+                            buttonLabel = "Browse...", placeholder = "No file selected")
+              ),
+              downloadButton("download_sample", "Sample", class = "btn-sm",
+                             title = "Download a sample CSV file")
           ),
-          div(class = "soft-text mt-2", "Use the controls to move through rows."),
-          div(style = "margin-top: .5rem;", textOutput("row_info"))
+
+          hr(style = "margin: 1rem 0;"),
+
+          div(class = "section-title", "Row Navigation"),
+          div(class = "nav-row",
+              div(style = "width: 30%;",
+                  div(class = "compact-input",
+                      numericInput("current_row", "Row:", 1, min = 1, step = 1, width = "100%")
+                  )
+              ),
+              div(style = "width: 35%;",
+                  actionButton("prev_row", "Previous", class = "btn btn-secondary w-100 compact-btn",
+                               icon = icon("arrow-left"))
+              ),
+              div(style = "width: 35%;",
+                  actionButton("next_row", "Next", class = "btn btn-secondary w-100 compact-btn",
+                               icon = icon("arrow-right"))
+              )
+          ),
+          div(class = "nav-info mt-2", textOutput("row_info"))
         )
       )
     ),
+
     column(
-      6,
+      9,
       card(
         class = "mb-3",
-        card_header(div(icon("wand-magic-sparkles"), "Actions")),
+        card_header(div(icon("columns"), "Abstracts")),
         card_body(
-          actionButton("copy_values", "Copy llm values to manual", class = "btn btn-primary", icon = icon("copy")),
-          div(class = "soft-text mt-2", "Copies LLM-derived values into the corresponding editable manual fields.")
+          uiOutput("other_columns_selector"),
+          div(class = "table-wrap", DTOutput("other_columns_table"))
         )
       )
     )
   ),
-  fluidRow(
-    column(
-      6,
-      card(
-        class = "mb-3",
-        card_header(div(icon("robot"), "Variables ending with _llm")),
-        card_body(
-          div(class = "table-wrap-tall", DTOutput("llm_table"))
-        )
+
+  card(
+    class = "mb-3",
+    card_header(
+      div(class = "action-panel",
+          div(class = "action-panel-left",
+              div(icon("wand-magic-sparkles"), "Data Editor"),
+              span(class = "soft-text", "Edit and manage your data values")
+          ),
+          div(class = "action-panel-right",
+              actionButton("copy_values", "Copy LLM to Manual", class = "btn btn-primary btn-sm compact-btn",
+                           icon = icon("copy"), title = "Copy all LLM values to manual columns"),
+              shinySaveButton("saveFile", "Save CSV", "Save as...", icon = icon("download"),
+                              class = "btn-primary btn-sm compact-btn")
+          )
       )
     ),
-    column(
-      6,
-      card(
-        class = "mb-3",
-        card_header(div(icon("pen-to-square"), "Variables ending with _manual (Editable)")),
-        card_body(
-          div(class = "table-wrap-tall", DTOutput("manual_table"))
+    card_body(
+      fluidRow(
+        column(
+          6,
+          div(class = "editor-column",
+              div(class = "section-title",
+                  "Variables ending with _llm",
+                  span(class = "tooltip-icon", icon("circle-info"),
+                       title = "These values are generated by the LLM and cannot be edited directly")
+              ),
+              div(class = "table-wrap", DTOutput("llm_table"))
+          )
+        ),
+        column(
+          6,
+          div(class = "editor-column",
+              div(class = "section-title",
+                  "Variables ending with _manual (Editable)",
+                  span(class = "tooltip-icon", icon("circle-info"),
+                       title = "You can edit these values directly by clicking on cells")
+              ),
+              div(class = "table-wrap", DTOutput("manual_table"))
+          )
         )
-      )
-    ),
-    column(
-      6,
-      card(
-        class = "mb-3",
-        card_header(div(icon("triangle-exclamation"), "Warning")),
-        card_body(
-          verbatimTextOutput("warning_message")
-        )
-      )
+      ),
+      div(class = "mt-3", verbatimTextOutput("warning_message"))
     )
-  ),
-  shinySaveButton("saveFile", "Save CSV", "Save as...", icon = icon("download"))
+  )
 )
+
 
 
 # SERVER ------------------------------------------------------------------

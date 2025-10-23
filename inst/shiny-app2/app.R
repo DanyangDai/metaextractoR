@@ -268,7 +268,7 @@ server <- function(input, output,session) {
   observeEvent(input$useLLM, {
     req(input$useLLM, current_data(),input$LLM_prompt,input$abstract_col,input$extraction_type )
 
-    # browser()
+   # browser()
 
     df <- current_data()[current_row(), input$abstract_col, drop = FALSE]
 
@@ -302,14 +302,14 @@ server <- function(input, output,session) {
       bot$extract_data(abstract, type = type_abstract)
     })
 
-    data[current,input$var_llm]  <- processed[[1]][[1]]
+    data[current,input$var_llm]  <-  ifelse(is.null(processed[[1]][[1]]), NA, processed[[1]][[1]])
 
     current_data(data)
 
     abstract <- df[[input$abstract_col]]
     user_prompt <- input$LLM_prompt
     model <- input$model_name
-    results <- processed[[1]][[1]]
+    results <- ifelse(is.null(processed[[1]][[1]]), NA, processed[[1]][[1]])
     # also check value, make sure not NA
     # check see if the data checked aganist is the same with LLM value type
 
@@ -317,7 +317,7 @@ server <- function(input, output,session) {
 
     check_var <-sub("_llm$", "_manual", input$var_llm)
 
-    correct <- processed[[1]][[1]] ==  data[current,check_var]
+    correct <- results ==  data[current,check_var]
 
 
     # Append the input and output to the log file with a timestamp
@@ -337,7 +337,7 @@ server <- function(input, output,session) {
     if(is.na(data[current,check_var])){
 
       showNotification("Manual extraction value missing.")
-    } else if( processed[[1]][[1]] ==  data[current,check_var]) {
+    } else if(ifelse(is.na(results ==  data[current,check_var]),FALSE,results ==  data[current,check_var])) {
       runjs('document.getElementById("LLM_prompt").style.backgroundColor = "lightgreen";')
     } else {
       # Change background color to red

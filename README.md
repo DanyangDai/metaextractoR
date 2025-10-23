@@ -117,11 +117,18 @@ save_testing_data(separate_abs$test)
 ```
 
 Notice that you should have two `.csv` file saved to
-`metaextractor_data` folder, one called: “training_stage_0_data.csv”
-another called: “testing_stage_0_data.csv”. The name of the file has
-been pre-fixed to ensure the correct file goes into the Shinyapps.
+`metaextractor_data` folder under the current working directory, one
+called: “training_stage_0_data.csv” another called:
+“testing_stage_0_data.csv”. The name of the file has been pre-fixed to
+ensure the correct file goes into the Shinyapps.
 
-### 4. Identify varaible that is avaiable for extraction
+### 4. `glance_manual_app()`: manual data extraction from abstracts for the training set.
 
-This extraction step aims to identify data items that is available in
-the abstract.
+Under the `metaextractor_data` folder, the `training_stage_0_data.csv`
+file should be uploaded to the `glance_manual_app()` Shinyapp.
+
+To load the `glance_manual_app()` run code.
+
+``` r
+glance_manual_app()
+```

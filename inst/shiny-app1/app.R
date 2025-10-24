@@ -1,11 +1,3 @@
-library(shiny)
-library(bslib)
-library(DT)
-library(tidyr)
-library(shinyFiles)
-
-
-
 # CSS ----------------------------------------------------------------------
 
 checkbox_css <- HTML(
@@ -138,14 +130,14 @@ ui <- page_sidebar(
     div(
       class = "data-height",
       style = "height: 500px; overflow-y: auto; margin-top: 10px;",
-      DTOutput("selected_data")
+      dataTableOutput("selected_data")
     )
   ),
   card(
     class = "mt-3",
     card_header("Manual Extraction"),
     htmlOutput("manual_entry_info"),
-    DTOutput("add_manual_var")
+    dataTableOutput("add_manual_var")
   ),
   div(
     class = "sticky-actions mt-3",
@@ -265,19 +257,10 @@ server <- function(input, output, session) {
     }
   )
   # Display selected data
-  output$selected_data <- renderDT({
+  output$selected_data <- renderDataTable({
     req(current_data(), input$selected_vars)
     df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
-    datatable(
-      df,
-      options = list(
-        dom = 't', # Only show the table, no controls
-        ordering = FALSE,
-        scrolly = '800px',
-        searchHighlight = TRUE
-      ),
-      rownames = FALSE
-    )
+    show_datatable(df, 1)
   })
 
   check_manual_long <- reactive({
@@ -288,7 +271,7 @@ server <- function(input, output, session) {
     col_man <- grep("_manual$", names(result[1, ]))
 
     result[current_row(), col_man, drop = FALSE] |>
-      pivot_longer(
+      tidyr::pivot_longer(
         cols = ends_with("_manual"),
         names_to = "Manual_variable",
         values_to = "Manual_value",
@@ -312,19 +295,9 @@ server <- function(input, output, session) {
     ))
   })
 
-  output$add_manual_var <- renderDT({
+  output$add_manual_var <- renderDataTable({
     req(current_data())
-    datatable(
-      check_manual_long(),
-      editable = TRUE,
-      options = list(
-        dom = 't', # Only show the table, no controls
-        ordering = FALSE,
-        scrolly = '800px',
-        searchHighlight = TRUE
-      ),
-      rownames = FALSE
-    )
+    show_datatable(check_manual_long(), 1, edit = TRUE)
   })
 
   # Observe edits and update the data
@@ -384,7 +357,7 @@ server <- function(input, output, session) {
     }
   })
 
-  volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
+  volumes <- get_download_locations()
 
   shinyFileSave(input, "saveFile", roots = volumes, session = session)
 

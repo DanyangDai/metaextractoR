@@ -2,11 +2,9 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @import DT
 #' @import shinyFiles
+#' @import shiny
 #' @import bslib
-#' @import shinyjs
-#' @import tidyr
-#' @import vctrs
+#' @importFrom shinyjs useShinyjs
 ## usethis namespace: end
 NULL

@@ -17,12 +17,16 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Danyang Dai \email{danyang.dai@uq.edu.au} (\href{https://orcid.org/0009-0006-3984-291X}{ORCID}) [copyright holder]
+\strong{Maintainer}: Danyang Dai \email{danyan.dai01@gmail.com} (\href{https://orcid.org/0009-0006-3984-291X}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{
-  \item Emi Tanaka \email{Emi.Tanaka@anu.edu.au} (\href{https://orcid.org/0000-0002-1455-259X}{ORCID})
-  \item Jason Pole \email{j.pole@uq.edu.au} (\href{https://orcid.org/0000-0002-0413-5434}{ORCID})
+  \item Emi Tanaka \email{dr.emi.tanaka@gmail.com} (\href{https://orcid.org/0000-0002-1455-259X}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Jason Pole \email{j.pole@uq.edu.au} (\href{https://orcid.org/0000-0002-0413-5434}{ORCID}) [thesis advisor]
 }
 
 }

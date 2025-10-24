@@ -48,15 +48,14 @@ Imports:
     ellmer,
     shiny,
     bslib,
-    DT,
     shinyjs,
     tidyr,
     shinyFiles,
     cli,
-    vctrs,
     dplyr,
     fs,
-    purrr
+    methods,
+    DT
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

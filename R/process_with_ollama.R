@@ -124,7 +124,7 @@ process_with_ollama <- function(
       if (is.factor(col)) {
         factor(NA, levels = levels(col))
       } else {
-        as(NA, class(col)[1])
+        methods::as(NA, class(col)[1])
       }
     }))
 

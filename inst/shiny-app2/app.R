@@ -1,11 +1,3 @@
-library(shiny)
-library(bslib)
-library(DT)
-library(ellmer)
-library(shinyjs)
-library(shinyFiles)
-
-
 # Extract unique prefixes
 get_prefix <- function(name) {
   sub("_.*", "", name)
@@ -85,7 +77,7 @@ ui <- page_sidebar(
       selectInput(
         "model_name",
         "Model Name",
-        choices = models_ollama(),
+        choices = ellmer::models_ollama(),
         width = "100%"
       ),
       selectInput(
@@ -135,7 +127,7 @@ ui <- page_sidebar(
  .bslib-sidebar { max-height: 100vh; overflow-y: auto; }/ NEW: sidebar gets its own scroll when needed */
  "
   ))),
-  useShinyjs(), # MOVED: stays within page (works the same)
+  shinyjs::useShinyjs(), # MOVED: stays within page (works the same)
   uiOutput("ollama_warning"), # MOVED: inside page (top of main content)
   card(
     body_fill = TRUE, # NEW: let the card body fill the remaining height
@@ -255,16 +247,7 @@ server <- function(input, output, session) {
   output$selected_data <- renderDT({
     req(current_data(), input$selected_vars)
     df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
-    datatable(
-      df,
-      options = list(
-        dom = 't', # Only show the table, no controls
-        ordering = FALSE,
-        scrolly = '800px',
-        searchHighlight = TRUE
-      ),
-      rownames = FALSE
-    )
+    show_datatable(df, 1)
   })
 
   output$variable_check <- renderText({
@@ -443,7 +426,7 @@ server <- function(input, output, session) {
   })
 
   # Downloadable csv of selected dataset
-  volumes <- c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
+  volumes <- get_download_locations()
 
   shinyFileSave(input, "saveFile", roots = volumes, session = session)
 

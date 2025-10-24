@@ -449,7 +449,7 @@ server <- function(input, output, session) {
       )
       rownames(llm_row_data_t) <- NULL
       colnames(llm_row_data_t) <- c("Variable", "Value")
-      show_datatable(llm_row_data_t, 2)
+      show_datatable(llm_row_data_t, 3)
     }
   })
 

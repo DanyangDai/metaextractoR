@@ -1,38 +1,48 @@
 # Batch text processing for extraction -------------------------------------------------------------
 
-#' @title process_with_ollama
+#' @title Process the abstract with a large language model
 #'
 #' @description A function that batch process data extraction from text.
 #'
 #' @param input A data frame contains abstracts and variables we want to extract. If you are not sure how the data should look like, please see the example dataset abstract. This data should be the testing data saved using the `save_training_data()` function.
-#'
 #' @param model Large Language Model name you want to use i.e. "llama3.1:8b". If you are not sure what LLMs have been installed locally, please use the function: ellmer:::ollama_models() to find out what LLMs are available.
-#'
 #' @param type_abstract is created using the type_object function from the ellmer package. Objects represent a collection of named values and are created with type_object(). Objects can contain any number of scalars, arrays, and other objects. They are similar to named lists in R. If still not sure, please look up the documentation of ellmer::type_object().
-#'
 #' @param i number of abstracts you want to process at once.
-#'
-#' @param abstract_col column name for the column contains abstract. i.e. abstracto_col = "Abstract"
+#' @param abstract_col column name for the column contains abstract.
 #'
 #' @importFrom ellmer chat_ollama
 #' @importFrom purrr imap_dfr
 #' @importFrom dplyr bind_cols
 #'
 #' @examples
-#' #example code
-#' type_abstract <- ellmer::type_object(
-#' "Some key information from abstract.",
-#' no_patients_llm = ellmer::type_integer("Find the total number of patients included in this study.",required = FALSE),
-#' no_AKI_llm = ellmer::type_integer("Number of Acute Kidney Injury (AKI) patients included in this study.", required = FALSE),
-#' per_AKI_llm = ellmer::type_number("Percentage of Acute Kidney Injury ",required = FALSE),
-#' ICU_llm = ellmer::type_boolean("Included only Intensive Care Unit (ICU) patients.",required = FALSE),
-#' start_date = ellmer::type_string("The starting date of the study written in YYYY-MM-DD format",required = FALSE),
-#' end_date = ellmer::type_string("The end date of the study written in YYYY-MM-DD format",required = FALSE),
-#' age_mean_llm = ellmer::type_number("Find the average age of the study cohort",required = FALSE),
-#' age_median_llm = ellmer::type_number("Find the median age of the study cohort",required = FALSE),
+#' library(ellmer)
+#' type_abstract <- type_object("Some key information from abstract.",
+#'   no_patients_llm = type_integer("Find the total number of patients
+#'                                   included in this study.",
+#'                                   required = FALSE),
+#'   no_AKI_llm = type_integer("Number of Acute Kidney Injury (AKI) patients
+#'                              included in this study.",
+#'                              required = FALSE),
+#'   per_AKI_llm = type_number("Percentage of Acute Kidney Injury ",
+#'                              required = FALSE),
+#'   ICU_llm = type_boolean("Included only Intensive Care Unit (ICU) patients.",
+#'                           required = FALSE),
+#'   start_date = type_string("The starting date of the study written in
+#'                             YYYY-MM-DD format",
+#'                             required = FALSE),
+#'   end_date = type_string("The end date of the study written in YYYY-MM-DD
+#'                           format",
+#'                           required = FALSE),
+#'   age_mean_llm = type_number("Find the average age of the study cohort",
+#'                               required = FALSE),
+#'   age_median_llm = type_number("Find the median age of the study cohort",
+#'                                 required = FALSE)
 #' )
 #' \dontrun{
-#' process_with_ollama()
+#' process_with_ollama(abstracts,
+#'                     type_abstract = type_abstract,
+#'                     i = 1,
+#'                     abstract_col = "Abstract")
 #' }
 #' @return Returns a data.frame with results and time.
 #' @export

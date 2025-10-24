@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_with_ollama.R
 \name{process_with_ollama}
 \alias{process_with_ollama}
-\title{process_with_ollama}
+\title{Process the abstract with a large language model}
 \usage{
 process_with_ollama(
   input,
@@ -21,7 +21,7 @@ process_with_ollama(
 
 \item{i}{number of abstracts you want to process at once.}
 
-\item{abstract_col}{column name for the column contains abstract. i.e. abstracto_col = "Abstract"}
+\item{abstract_col}{column name for the column contains abstract.}
 }
 \value{
 Returns a data.frame with results and time.
@@ -30,19 +30,33 @@ Returns a data.frame with results and time.
 A function that batch process data extraction from text.
 }
 \examples{
-#example code
-type_abstract <- ellmer::type_object(
-"Some key information from abstract.",
-no_patients_llm = ellmer::type_integer("Find the total number of patients included in this study.",required = FALSE),
-no_AKI_llm = ellmer::type_integer("Number of Acute Kidney Injury (AKI) patients included in this study.", required = FALSE),
-per_AKI_llm = ellmer::type_number("Percentage of Acute Kidney Injury ",required = FALSE),
-ICU_llm = ellmer::type_boolean("Included only Intensive Care Unit (ICU) patients.",required = FALSE),
-start_date = ellmer::type_string("The starting date of the study written in YYYY-MM-DD format",required = FALSE),
-end_date = ellmer::type_string("The end date of the study written in YYYY-MM-DD format",required = FALSE),
-age_mean_llm = ellmer::type_number("Find the average age of the study cohort",required = FALSE),
-age_median_llm = ellmer::type_number("Find the median age of the study cohort",required = FALSE),
+library(ellmer)
+type_abstract <- type_object("Some key information from abstract.",
+  no_patients_llm = type_integer("Find the total number of patients
+                                  included in this study.",
+                                  required = FALSE),
+  no_AKI_llm = type_integer("Number of Acute Kidney Injury (AKI) patients
+                             included in this study.",
+                             required = FALSE),
+  per_AKI_llm = type_number("Percentage of Acute Kidney Injury ",
+                             required = FALSE),
+  ICU_llm = type_boolean("Included only Intensive Care Unit (ICU) patients.",
+                          required = FALSE),
+  start_date = type_string("The starting date of the study written in
+                            YYYY-MM-DD format",
+                            required = FALSE),
+  end_date = type_string("The end date of the study written in YYYY-MM-DD
+                          format",
+                          required = FALSE),
+  age_mean_llm = type_number("Find the average age of the study cohort",
+                              required = FALSE),
+  age_median_llm = type_number("Find the median age of the study cohort",
+                                required = FALSE)
 )
 \dontrun{
-process_with_ollama()
+process_with_ollama(abstracts,
+                    type_abstract = type_abstract,
+                    i = 1,
+                    abstract_col = "Abstract")
 }
 }

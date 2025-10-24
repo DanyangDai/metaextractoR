@@ -6,8 +6,8 @@
 #'
 #' @examples
 #'
-#' \dontrun{
-#' manual_validation_app()
+#' if (interactive()) {
+#'   manual_validation_app()
 #' }
 #' @return Runs a shiny app.
 #'

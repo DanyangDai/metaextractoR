@@ -5,8 +5,8 @@
 #'
 #' @return Runs a shiny app.
 #' @examples
-#' \donotrun{
-#' glance_manual_app()
+#' if (interactive()) {
+#'  glance_manual_app()
 #' }
 #' @export
 glance_manual_app <- function() {

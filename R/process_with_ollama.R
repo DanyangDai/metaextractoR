@@ -10,10 +10,6 @@
 #' @param i number of abstracts you want to process at once.
 #' @param abstract_col column name for the column contains abstract.
 #'
-#' @importFrom ellmer chat_ollama
-#' @importFrom purrr imap_dfr
-#' @importFrom dplyr bind_cols
-#'
 #' @examples
 #' library(ellmer)
 #' type_abstract <- type_object("Some key information from abstract.",
@@ -53,8 +49,7 @@ process_with_ollama <- function(
   i,
   abstract_col
 ) {
-  input <- input |>
-    select(-ends_with("llm"))
+  input <- dplyr::select(input, -ends_with("llm"))
 
   # Validate input
   if (!is.data.frame(input)) {
@@ -79,7 +74,7 @@ process_with_ollama <- function(
     i <- 1:nrow(input)
   }
 
-  chat <- chat_ollama(model = model, seed = 1, api_args = list(temperature = 0))
+  chat <- ellmer::chat_ollama(model = model, seed = 1, api_args = list(temperature = 0))
   start <- Sys.time()
 
   results <- list() # Collect all results here
@@ -153,14 +148,14 @@ process_with_ollama <- function(
     }
   })
 
-  processed <- bind_rows(results_processed)
+  processed <- dplyr::bind_rows(results_processed)
 
   # Log processing information
   message(sprintf("Started with %d abstracts", length(i)))
 
   end <- Sys.time()
 
-  data <- bind_cols(result_df[i, ], processed)
+  data <- dplyr::bind_cols(result_df[i, ], processed)
 
   return(list(data, time = end - start))
 }

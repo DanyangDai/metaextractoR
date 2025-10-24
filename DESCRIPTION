@@ -6,14 +6,14 @@ Authors@R: c(
     person(
       given = "Danyang", 
       family = "Dai",
-      email = "danyang.dai@uq.edu.au",
+      email = "danyan.dai01@gmail.com",
       role = c("aut", "cre", "cph"),
       comment = c(ORCID = "0009-0006-3984-291X")
     ),
     person(
     given = "Emi",
     family = "Tanaka",
-    email = "Emi.Tanaka@anu.edu.au",
+    email = "dr.emi.tanaka@gmail.com",
     role = c("aut"),
     comment = c(ORCID = "0000-0002-1455-259X")
     ),
@@ -21,7 +21,7 @@ Authors@R: c(
     given = "Jason",
     family = "Pole",
     email = "j.pole@uq.edu.au",
-    role = c("aut"),
+    role = c("ths"),
     comment = c(ORCID = "0000-0002-0413-5434")
     )
   )

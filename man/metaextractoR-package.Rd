@@ -8,8 +8,16 @@
 \description{
 This is an R package that utilises Large Language Models to assist with data extraction during meta-analysis. This package incorporates three modular Shiny apps to implement a human-in-the-loop framework. (1) a manual extraction interface for abstracts, (2) refining prompt engineering and model selection, and (3) validation of LLM-generated outputs. These apps enable researchers to iteratively collaborate with LLMs, with each abstract undergoing double data extraction—once manually by a human researcher and once independently by an LLM-assisted process—to emulate the double extraction process recommended by international standards. Notably, the package runs fully on local machines, with no need for API setup or external data transfer, maximising data privacy and accessibility. Robust logging features further enhance transparency and reproducibility by recording all prompt iterations and outputs.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/DanyangDai/metaextractoR}
+  \item Report bugs at \url{https://github.com/DanyangDai/metaextractoR/issues}
+}
+
+}
 \author{
-\strong{Maintainer}: Danyang Dai \email{danyang.dai@uq.edu.au} (\href{https://orcid.org/0009-0006-3984-291X}{ORCID})
+\strong{Maintainer}: Danyang Dai \email{danyang.dai@uq.edu.au} (\href{https://orcid.org/0009-0006-3984-291X}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{

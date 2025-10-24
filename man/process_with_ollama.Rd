@@ -23,6 +23,9 @@ process_with_ollama(
 
 \item{abstract_col}{column name for the column contains abstract. i.e. abstracto_col = "Abstract"}
 }
+\value{
+Returns a data.frame with results and time.
+}
 \description{
 A function that batch process data extraction from text.
 }
@@ -39,10 +42,7 @@ end_date = ellmer::type_string("The end date of the study written in YYYY-MM-DD 
 age_mean_llm = ellmer::type_number("Find the average age of the study cohort",required = FALSE),
 age_median_llm = ellmer::type_number("Find the median age of the study cohort",required = FALSE),
 )
-
-
 \dontrun{
 process_with_ollama()
 }
-
 }

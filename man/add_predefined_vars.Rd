@@ -17,3 +17,8 @@ new dataset with additional empty columns
 \description{
 Pre-processing functions and saving intermediate data
 }
+\examples{
+add_predefined_vars(abstracts,
+                   c("no_participants", "no_aki", "age_mean", "age_sd"))
+
+}

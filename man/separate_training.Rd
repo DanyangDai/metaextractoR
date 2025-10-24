@@ -11,6 +11,13 @@ separate_training(data, percentage = 0.1)
 
 \item{percentage}{percentage of separation training sets. If percentage set to be 0.1, 10% of the data will be the training set and 90% of the data will be testing set.}
 }
+\value{
+A list with two the train and test data.frames.
+}
 \description{
 This function will separate the abstracts into training and testing sets.
+}
+\examples{
+separate_training(abstracts, percentage = 0.4)
+
 }

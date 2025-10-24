@@ -24,3 +24,19 @@
 #' }
 #' @source Created for demonstration purposes
 "abstracts"
+
+
+#' @rdname abstracts
+"app_2"
+
+#' @rdname abstracts
+"app_3"
+
+#' @rdname abstracts
+"testing_stage_0_data"
+
+#' @rdname abstracts
+"training_stage_0_data"
+
+
+

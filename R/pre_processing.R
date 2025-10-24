@@ -31,13 +31,12 @@ add_predefined_vars <- function(data, list_vars) {
 }
 
 
-#' @title separate_training
+#' @title Separates a data into training and testing datasets
 #'
 #' @description
 #' This function will separate the abstracts into training and testing sets.
 #'
 #' @param data The csv file contains abstracts with
-#'
 #' @param percentage percentage of separation training sets. If percentage set to be 0.1, 10% of the data will be the training set and 90% of the data will be testing set.
 #'
 #' @examples

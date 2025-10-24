@@ -2,7 +2,7 @@
 % Please edit documentation in R/pre_processing.R
 \name{separate_training}
 \alias{separate_training}
-\title{separate_training}
+\title{Separates a data into training and testing datasets}
 \usage{
 separate_training(data, percentage = 0.1)
 }

@@ -25,8 +25,8 @@ Authors@R: c(
     comment = c(ORCID = "0000-0002-0413-5434")
     )
   )
-Description: This is an R package that utilises Large Language Models to assist
-    with data extraction during meta-analysis. This package incorporates three
+Description: This is an R package that utilises Large Language Models (LLMs) to assist
+    with data extraction for meta-analysis. This package incorporates three
     modular Shiny apps to implement a human-in-the-loop framework. (1) a manual
     extraction interface for abstracts, (2) refining prompt engineering and model
     selection, and (3) validation of LLM-generated outputs. These apps enable
@@ -55,7 +55,8 @@ Imports:
     cli,
     vctrs,
     dplyr,
-    fs
+    fs,
+    purrr
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

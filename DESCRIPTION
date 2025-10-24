@@ -1,6 +1,6 @@
 Package: metaextractoR
 Type: Package
-Title: Data extraction for meta-analysis with large language mdoels 
+Title: Data Extraction for Meta-Analysis with Large Language Models
 Version: 0.1.0
 Authors@R: c(
     person(

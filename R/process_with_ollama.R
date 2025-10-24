@@ -49,7 +49,7 @@ process_with_ollama <- function(
   i,
   abstract_col
 ) {
-  input <- dplyr::select(input, -ends_with("llm"))
+  input <- dplyr::select(input, -dplyr::ends_with("llm"))
 
   # Validate input
   if (!is.data.frame(input)) {

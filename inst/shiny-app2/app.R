@@ -135,7 +135,7 @@ ui <- page_sidebar(
     card_body(
       div(
         style = "height: 100%; overflow: auto;", # CHANGED: replaces fixed 800px height with flexible fill+scroll
-        DTOutput("selected_data")
+        DT::DTOutput("selected_data")
       )
     ),
     card_footer(
@@ -224,7 +224,7 @@ server <- function(input, output, session) {
       row = current_row(),
     )
     # print("reached observe")
-    runjs(
+    shinyjs::runjs(
       'console.log("reached");console.log(document.getElementById("LLM_prompt").style.backgroundColor);document.getElementById("LLM_prompt").style.backgroundColor = "white";'
     )
   })
@@ -244,7 +244,7 @@ server <- function(input, output, session) {
   })
 
   # Display selected data
-  output$selected_data <- renderDT({
+  output$selected_data <- DT::renderDT({
     req(current_data(), input$selected_vars)
     df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
     show_datatable(df, 1)
@@ -319,30 +319,30 @@ server <- function(input, output, session) {
     current <- current_row()
 
     if (input$extraction_type == "integer") {
-      type_abstract <- type_object(
+      type_abstract <- ellmer::type_object(
         "Extraction from abstract.",
-        !!input$var_llm := type_integer(input$LLM_prompt, required = FALSE)
+        !!input$var_llm := ellmer::type_integer(input$LLM_prompt, required = FALSE)
       )
     } else if (input$extraction_type == "number") {
-      type_abstract <- type_object(
+      type_abstract <- ellmer::type_object(
         "Extraction from abstract.",
-        !!input$var_llm := type_number(input$LLM_prompt, required = FALSE)
+        !!input$var_llm := ellmer::type_number(input$LLM_prompt, required = FALSE)
       )
     } else if (input$extraction_type == "boolean") {
-      type_abstract <- type_object(
+      type_abstract <- ellmer::type_object(
         "Extraction from abstract.",
-        !!input$var_llm := type_boolean(input$LLM_prompt, required = FALSE)
+        !!input$var_llm := ellmer::type_boolean(input$LLM_prompt, required = FALSE)
       )
     } else if (input$extraction_type == "string") {
-      type_abstract <- type_object(
+      type_abstract <- ellmer::type_object(
         "Extraction from abstract.",
-        !!input$var_llm := type_string(input$LLM_prompt, required = FALSE)
+        !!input$var_llm := ellmer::type_string(input$LLM_prompt, required = FALSE)
       )
     }
 
     data <- current_data()
 
-    chat <- chat_ollama(
+    chat <- ellmer::chat_ollama(
       model = input$model_name,
       seed = 1,
       api_args = list(temperature = 0)
@@ -399,12 +399,12 @@ server <- function(input, output, session) {
         results == data[current, check_var]
       )
     ) {
-      runjs(
+      shinyjs::runjs(
         'document.getElementById("LLM_prompt").style.backgroundColor = "lightgreen";'
       )
     } else {
       # Change background color to red
-      runjs(
+      shinyjs::runjs(
         'document.getElementById("LLM_prompt").style.backgroundColor = "lightcoral";'
       )
     }

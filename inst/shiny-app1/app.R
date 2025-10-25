@@ -37,10 +37,40 @@ checkbox_css <- HTML(
 "
 )
 
+get_download_locations <- function() {
+  c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
+}
+
+
+show_datatable <- function(.data, app_number, edit = FALSE) {
+  if(app_number == 1) {
+    DT::datatable(
+      .data,
+      editable = edit,
+      options = list(
+        dom = 't', # Only show the table, no controls
+        ordering = FALSE,
+        scrolly = '800px',
+        searchHighlight = TRUE
+      ),
+      rownames = FALSE
+    )
+  } else if(app_number == 2) {
+    # uses the same as 1 for now
+  } else if(app_number == 3) {
+    DT::datatable(
+      .data,
+      options = list(dom = 't', ordering = FALSE, pageLength = 50),
+      rownames = FALSE,
+      editable = edit
+    )
+  }
+}
 
 # UI ----------------------------------------------------------------------
-
-ui <- page_sidebar(
+library(bslib)
+library(shinyFiles)
+ui <- bslib::page_sidebar(
   title = tagList(icon("flask"), "LLM Systematic Review"),
   theme = bs_theme(
     version = 5,
@@ -257,10 +287,12 @@ server <- function(input, output, session) {
     }
   )
   # Display selected data
-  output$selected_data <- renderDataTable({
+  output$selected_data <- DT::renderDataTable({
+    invisible(suppressWarnings(suppressMessages({
     req(current_data(), input$selected_vars)
     df <- current_data()[current_row(), input$selected_vars, drop = FALSE]
     show_datatable(df, 1)
+    })))
   })
 
   check_manual_long <- reactive({
@@ -295,9 +327,12 @@ server <- function(input, output, session) {
     ))
   })
 
-  output$add_manual_var <- renderDataTable({
+  output$add_manual_var <-  DT::renderDataTable({
+    invisible(suppressWarnings(suppressMessages({
     req(current_data())
     show_datatable(check_manual_long(), 1, edit = TRUE)
+    })))
+
   })
 
   # Observe edits and update the data

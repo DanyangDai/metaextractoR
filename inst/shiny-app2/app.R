@@ -392,6 +392,15 @@ server <- function(input, output, session) {
 
     if (is.na(data[current, check_var])) {
       showNotification("Manual extraction value missing.")
+    } else if(is.na(results == data[current, check_var])){
+      showNotification(
+        HTML("<span style='font-size: 20px; font-weight: bold; color: red;'>No value was extracted by LLM</span>"),
+        duration = 5,
+        type = "message"  # or "warning", "error"
+      )
+      shinyjs::runjs(
+        'document.getElementById("LLM_prompt").style.backgroundColor = "lightgrey";'
+      )
     } else if (
       ifelse(
         is.na(results == data[current, check_var]),

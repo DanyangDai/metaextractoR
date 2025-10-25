@@ -13,7 +13,7 @@
 #'
 #' @export
 manual_validation_app <- function() {
-  app_dir <- system.file("app3.R", package = "metaextractoR")
+  app_dir <- system.file("shiny-app/app.R", package = "metaextractoR")
 
   shiny::runApp(app_dir, display.mode = "normal")
 }

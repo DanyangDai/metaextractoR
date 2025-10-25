@@ -47,15 +47,15 @@ Depends:
 Imports: 
     ellmer,
     shiny,
-    bslib,
-    shinyjs,
     tidyr,
     shinyFiles,
     cli,
     dplyr,
     fs,
     methods,
-    DT
+    DT,
+    bslib,
+    shinyjs
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

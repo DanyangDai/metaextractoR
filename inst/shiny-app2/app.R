@@ -236,7 +236,7 @@ server <- function(input, output, session) {
   # Don't know how
   temp <- NULL
 
-  log_dir <- paste0(original_wd)
+  log_dir <- file.path(original_wd,"log_files")
 
   temp_log_file <- file.path(original_wd, paste0("log_files", tempfile(tmpdir = "", fileext = ".csv")))
 
@@ -451,7 +451,7 @@ server <- function(input, output, session) {
         'document.getElementById("LLM_prompt").style.backgroundColor = "lightcoral";'
       )
     }
-
+## error
     write.table(
       log_entry,
       temp_log_file,

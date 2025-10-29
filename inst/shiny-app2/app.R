@@ -235,7 +235,6 @@ server <- function(input, output, session) {
   temp <- NULL
 
   log_dir <- "log_files"
-
   temp_log_file <- tempfile(pattern = "user_log_", fileext = ".csv")
 
   if (!dir.exists(log_dir)) {
@@ -273,6 +272,18 @@ server <- function(input, output, session) {
       "var_llm",
       choices = grep("_llm$", names(data), value = T)
     )
+
+    temp <- NULL
+
+    log_dir <- "log_files"
+    temp_log_file <- tempfile(pattern = "user_log_", fileext = ".csv")
+
+    if (!dir.exists(log_dir)) {
+      dir.create(log_dir)
+      message("Folder created: ", log_dir)
+    } else {
+      message("Folder already exists: ", log_dir)
+    }
   })
 
   # Display selected data

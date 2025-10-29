@@ -234,8 +234,9 @@ server <- function(input, output, session) {
   # Don't know how
   temp <- NULL
 
-  log_dir <- "log_files"
-  temp_log_file <- tempfile(pattern = "user_log_", fileext = ".csv")
+  log_dir <- file.path(getwd(), "log_files")
+
+  temp_log_file <- file.path(getwd(), paste0("log_files", tempfile(tmpdir = "", fileext = ".csv")))
 
   if (!dir.exists(log_dir)) {
     dir.create(log_dir)
@@ -520,3 +521,4 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
+

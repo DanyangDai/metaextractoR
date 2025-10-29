@@ -11,8 +11,14 @@
 #' @returns Runs a shiny app.
 #' @export
 prompt_engineering_app <- function() {
-  original_wd <- normalizePath(getwd())
   app_dir <- system.file("shiny-app2/app.R", package = "metaextractoR")
-
-  shiny::runApp(app_dir, display.mode = "normal")
+  log_dir <- "log_files"
+  if (!dir.exists(log_dir)) {
+    dir.create(log_dir)
+    message("Folder created: ", log_dir)
+  } else {
+    message("Folder already exists: ", log_dir)
+  }
+  fs::file_copy(app_dir, log_dir, overwrite = TRUE)
+  shiny::runApp("log_files/app.R", display.mode = "normal")
 }

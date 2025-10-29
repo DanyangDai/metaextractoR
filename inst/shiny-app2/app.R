@@ -8,7 +8,7 @@ get_download_locations <- function() {
   c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
 }
 
-original_wd <- normalizePath(getwd())
+original_wd <- normalizePath("./")
 
 library(bslib)
 library(shinyFiles)
@@ -236,7 +236,7 @@ server <- function(input, output, session) {
   # Don't know how
   temp <- NULL
 
-  log_dir <- paste0(original_wd, "/log_files")
+  log_dir <- paste0(original_wd)
 
   temp_log_file <- file.path(original_wd, paste0("log_files", tempfile(tmpdir = "", fileext = ".csv")))
 

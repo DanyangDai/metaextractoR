@@ -4,7 +4,12 @@ get_prefix <- function(name) {
 }
 prefixes <- unique(sapply(names(df), get_prefix))
 
+get_download_locations <- function() {
+  c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
+}
 
+library(bslib)
+library(shinyFiles)
 # check functions
 
 ollama_installed <- function() {
@@ -29,6 +34,7 @@ ollama_running <- function() {
     return(TRUE)
   }
 }
+library(shiny)
 
 # UI ----------------------------------------------------------------------
 ui <- page_sidebar(

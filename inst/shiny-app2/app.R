@@ -234,9 +234,9 @@ server <- function(input, output, session) {
   # Don't know how
   temp <- NULL
 
-  log_dir <- file.path(getwd(), "log_files")
+  log_dir <- paste0(normalizePath(getwd()), "/log_files")
 
-  temp_log_file <- file.path(getwd(), paste0("log_files", tempfile(tmpdir = "", fileext = ".csv")))
+  temp_log_file <- file.path(normalizePath(getwd()), paste0("log_files", tempfile(tmpdir = "", fileext = ".csv")))
 
   if (!dir.exists(log_dir)) {
     dir.create(log_dir)

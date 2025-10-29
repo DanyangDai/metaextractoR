@@ -276,6 +276,7 @@ server <- function(input, output, session) {
     temp <- NULL
 
     log_dir <- "log_files"
+
     temp_log_file <- tempfile(pattern = "user_log_", fileext = ".csv")
 
     if (!dir.exists(log_dir)) {

@@ -11,6 +11,7 @@
 #' @returns Runs a shiny app.
 #' @export
 prompt_engineering_app <- function() {
+  original_wd <- normalizePath(getwd())
   app_dir <- system.file("shiny-app2/app.R", package = "metaextractoR")
 
   shiny::runApp(app_dir, display.mode = "normal")

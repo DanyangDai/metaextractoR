@@ -11,7 +11,9 @@
 #' @returns Runs a shiny app.
 #' @export
 prompt_engineering_app <- function() {
-  app_dir <- system.file("shiny-app2/app.R", package = "metaextractoR")
+  relative_dir <- file.path("shiny-app2", "app.R")
+  app_dir <- system.file(relative_dir, package = "metaextractoR")
+
   log_dir <- "log_files"
   if (!dir.exists(log_dir)) {
     dir.create(log_dir)
@@ -20,5 +22,8 @@ prompt_engineering_app <- function() {
     message("Folder already exists: ", log_dir)
   }
   fs::file_copy(app_dir, log_dir, overwrite = TRUE)
-  shiny::runApp("log_files/app.R", display.mode = "normal")
+
+  run_dir <- file.path("log_files","app.R")
+
+  shiny::runApp(run_dir, display.mode = "normal")
 }

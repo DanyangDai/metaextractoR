@@ -13,7 +13,9 @@
 #'
 glance_manual_app <- function() {
 
-  app_dir <- system.file("shiny-app1/app.R", package = "metaextractoR")
+  relative_dir <- file.path("shiny-app1", "app.R")
+
+  app_dir <- system.file(relative_dir, package = "metaextractoR")
 
   shiny::runApp(app_dir, display.mode = "normal")
 }

@@ -42,6 +42,11 @@ For more information, see our working paper
 
 ### 1. Getting the abstract information
 
+For installation of the package and Ollama models on your local machine,
+check out the tutorial at: [Introduction to metaextractoR - Part 1 data
+preparation and LLMs
+installation](https://www.youtube.com/watch?v=fdyTdDrLSMY).
+
 Once full-text review has been completed, you should have a list of
 articles included for the full-text extraction. At this stage, the user
 should have a csv file that contains a list of abstracts. If you are
@@ -166,7 +171,8 @@ glance_manual_app()
 ![](man/figures/app1.gif)
 
 To see more detailed usage of this `glance_manual_app()`, see YouTube
-video:
+video: [Introduction to metaextractoR - Part 2,
+glance_manual_app()](https://www.youtube.com/watch?v=UEsE7d2Crs0)
 
 ### 5. `prompt_engineering_app()`: prompt enginnering and model selection
 
@@ -177,10 +183,13 @@ prompt engineering Shinyapp.
 ![](man/figures/app2.gif)
 
 To see more detailed usage of this `prompt_engineering_app()`, see
-YouTube video:
+YouTube video: [Introduction to metaextractoR - Part 3,
+prompt_enginnering_app()](https://www.youtube.com/watch?v=aFblb5p8kVg&t=4s)
 
 Each of the tested prompt and model is recorded and saved as a csv file
-in the `log_files` folder.
+in the `log_files` folder. You can use the `log_files` for accuracy and
+efficiency checking. Select the most appropriate model and prompt for
+the `process_with_ollama` for batch processing.
 
 ### 6. Batch process with `process_with_ollama`
 
@@ -192,3 +201,9 @@ elements.
 
 Once LLM extraction on the testing set been completed, use the
 `manual_validation_app()` to manually check the LLM extraction values.
+
+![](man/figures/app3.gif)
+
+To see more detailed usage of this `manual_validation_app()`, see
+YouTube video: [Introduction to metaextractoR - Part 4,
+manual_validation_app()](https://www.youtube.com/watch?v=w3Pv_tme7Ho)

@@ -86,6 +86,7 @@
 <div class="section level3">
 <h3 id="id_1-getting-the-abstract-information">1. Getting the abstract information<a class="anchor" aria-label="anchor" href="#id_1-getting-the-abstract-information"></a>
 </h3>
+<p>For installation of the package and Ollama models on your local machine, check out the tutorial at: <a href="https://www.youtube.com/watch?v=fdyTdDrLSMY" class="external-link">Introduction to metaextractoR - Part 1 data preparation and LLMs installation</a>.</p>
 <p>Once full-text review has been completed, you should have a list of articles included for the full-text extraction. At this stage, the user should have a csv file that contains a list of abstracts. If you are using <a href="https://www.covidence.org" class="external-link">Covidence</a>, the csv file can be downloaded following the steps below:</p>
 <p><img src="reference/figures/export_abs_1.gif"></p>
 <p>If you are using free reference management software such as <a href="https://www.zotero.org/" class="external-link">Zotero</a>, the csv file contains abstracts can be exported following the steps below:</p>
@@ -97,7 +98,7 @@
 </h3>
 <p>Once you have download or exported the csv file containing the abstracts, you can read in the csv file to your R environment. Below we use our example data.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DanyangDai/metaextractoR" class="external-link">metaextractoR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://danyangdai.github.io/metaextractoR/" class="external-link">metaextractoR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">abstracts</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [50 × 8] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;  $ Title          : chr [1:50] "Development of a Risk Score for AKI onset in COVID-19 Patients: COV-AKI Score" "Risk factors associated with acute kidney injury in a cohort of hospitalized patients with COVID-19" "Clinical Features and Outcomes of Acute Kidney Injury in Critically Ill COVID-19 Patients: A Retrospective Observational Study" "Acute kidney injury in coronavirus infectious disease: a study of incidence, risk factors, and prognosis during"| __truncated__ ...</span></span>
@@ -158,15 +159,15 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glance_manual_app.html">glance_manual_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/app1.gif"></p>
-<p>To see more detailed usage of this <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code>, see YouTube video:</p>
+<p>To see more detailed usage of this <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code>, see YouTube video: <a href="https://www.youtube.com/watch?v=UEsE7d2Crs0" class="external-link">Introduction to metaextractoR - Part 2, glance_manual_app()</a></p>
 </div>
 <div class="section level3">
 <h3 id="id_5-prompt_engineering_app-prompt-enginnering-and-model-selection">5. <code>prompt_engineering_app()</code>: prompt enginnering and model selection<a class="anchor" aria-label="anchor" href="#id_5-prompt_engineering_app-prompt-enginnering-and-model-selection"></a>
 </h3>
 <p>Once the manual extraction is completed with the <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code>, the testing data should be saved. The saved data should be used in the prompt engineering Shinyapp.</p>
 <p><img src="reference/figures/app2.gif"></p>
-<p>To see more detailed usage of this <code><a href="reference/prompt_engineering_app.html">prompt_engineering_app()</a></code>, see YouTube video:</p>
-<p>Each of the tested prompt and model is recorded and saved as a csv file in the <code>log_files</code> folder.</p>
+<p>To see more detailed usage of this <code><a href="reference/prompt_engineering_app.html">prompt_engineering_app()</a></code>, see YouTube video: <a href="https://www.youtube.com/watch?v=aFblb5p8kVg&amp;t=4s" class="external-link">Introduction to metaextractoR - Part 3, prompt_enginnering_app()</a></p>
+<p>Each of the tested prompt and model is recorded and saved as a csv file in the <code>log_files</code> folder. You can use the <code>log_files</code> for accuracy and efficiency checking. Select the most appropriate model and prompt for the <code>process_with_ollama</code> for batch processing.</p>
 </div>
 <div class="section level3">
 <h3 id="id_6-batch-process-with-process_with_ollama">6. Batch process with <code>process_with_ollama</code>
@@ -179,6 +180,8 @@
 <a class="anchor" aria-label="anchor" href="#id_7-manual-check-with-manual_validation_app"></a>
 </h3>
 <p>Once LLM extraction on the testing set been completed, use the <code><a href="reference/manual_validation_app.html">manual_validation_app()</a></code> to manually check the LLM extraction values.</p>
+<p><img src="reference/figures/app3.gif"></p>
+<p>To see more detailed usage of this <code><a href="reference/manual_validation_app.html">manual_validation_app()</a></code>, see YouTube video: <a href="https://www.youtube.com/watch?v=w3Pv_tme7Ho" class="external-link">Introduction to metaextractoR - Part 4, manual_validation_app()</a></p>
 </div>
 </div>
 

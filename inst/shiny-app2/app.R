@@ -8,7 +8,7 @@ get_download_locations <- function() {
   c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
 }
 
-original_wd <- normalizePath("./")
+original_wd <- normalizePath(".")
 
 library(bslib)
 library(shinyFiles)
@@ -348,7 +348,6 @@ server <- function(input, output, session) {
       input$extraction_type
     )
 
-    # browser()
 
     df <- current_data()[current_row(), input$abstract_col, drop = FALSE]
 
@@ -404,7 +403,6 @@ server <- function(input, output, session) {
     # also check value, make sure not NA
     # check see if the data checked aganist is the same with LLM value type
 
-    # browser()
 
     check_var <- sub("_llm$", "_manual", input$var_llm)
 

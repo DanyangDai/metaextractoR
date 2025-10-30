@@ -1,4 +1,5 @@
-
+library(bslib)
+library(shinyFiles)
 get_download_locations <- function() {
   c(Home = fs::path_home(), "Downloads" = fs::path_home("Downloads"))
 }

@@ -503,7 +503,7 @@ server <- function(input, output, session) {
   session$onSessionEnded(function() {
     # Define the final log file path
     final_log_file <- file.path(
-      log_dir,
+      normalized_path,
       paste0("user_log_", Sys.time(), ".csv")
     )
 

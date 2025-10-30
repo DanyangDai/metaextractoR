@@ -28,7 +28,13 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/DanyangDai/metaextractoR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -38,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Pre-processing functions before shinyapps</h1>
-
+    <small class="dont-index">Source: <a href="https://github.com/DanyangDai/metaextractoR/blob/HEAD/R/pre_processing.R" class="external-link"><code>R/pre_processing.R</code></a></small>
     <div class="hidden name"><code>add_predefined_vars.Rd</code></div>
     </div>
 
@@ -67,6 +73,31 @@
     <p>new dataset with additional empty columns</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">add_predefined_vars</span><span class="op">(</span><span class="va">abstracts</span>,</span></span>
+<span class="r-in"><span>                   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no_participants"</span>, <span class="st">"no_aki"</span>, <span class="st">"age_mean"</span>, <span class="st">"age_sd"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 50 × 16</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Title       Authors Abstract `Published Year` `Published Month` Journal DOI  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #949494;">"</span>Developme… Palomb… Purpose…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                BMC Ne… 10.1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> <span style="color: #949494;">"</span>Risk fact… Contre… Backgro…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                BMC Ne… 10.1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> <span style="color: #949494;">"</span>Clinical … Bougue… Backgro…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                Journa… 10.3…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> <span style="color: #949494;">"</span>Acute kid… Magalh… Introdu…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                Intern… 10.1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> <span style="color: #949494;">"</span>Sex diffe… Bugiar… Aims Pr…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                Cardio… 10.1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> <span style="color: #949494;">"</span>Mortality… Al Owe… COVID-1…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                Journa… 10.3…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> <span style="color: #949494;">"</span>Frequency… Rashid… Backgro…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                Shiraz… 10.5…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> <span style="color: #949494;">"</span>\"Acute k… De La … This st…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                PLoS O… 10.1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> <span style="color: #949494;">"</span>Outcomes … Al-Ome… Backgro…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                Journa… 10.4…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> <span style="color: #949494;">"</span>Circulati… van Li… Introdu…             <span style="text-decoration: underline;">2</span>023 <span style="color: #BB0000;">NA</span>                ERJ Op… 10.1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 40 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 9 more variables: `Covidence #` &lt;chr&gt;, no_participants_manual &lt;lgl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   no_aki_manual &lt;lgl&gt;, age_mean_manual &lt;lgl&gt;, age_sd_manual &lt;lgl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   no_participants_llm &lt;lgl&gt;, no_aki_llm &lt;lgl&gt;, age_mean_llm &lt;lgl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   age_sd_llm &lt;lgl&gt;</span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -75,7 +106,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Danyang Dai, Emi Tanaka, Jason Pole.</p>
+  <p></p><p>Developed by Danyang Dai, Emi Tanaka.</p>
 </div>
 
 <div class="pkgdown">

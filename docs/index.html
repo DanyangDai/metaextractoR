@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> • metaextractoR</title>
+<title>Data Extraction for Meta-Analysis with Large Language Models • metaextractoR</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="">
-<meta property="og:description" content="This is an R package that utilises Large Language Models to assist with data extraction during meta-analysis. This package incorporates three modular Shiny apps to implement a human-in-the-loop framework. (1) a manual extraction interface for abstracts, (2) refining prompt engineering and model selection, and (3) validation of LLM-generated outputs. These apps enable researchers to iteratively collaborate with LLMs, with each abstract undergoing double data extraction—once manually by a human researcher and once independently by an LLM-assisted process—to emulate the double extraction process recommended by international standards. Notably, the package runs fully on local machines, with no need for API setup or external data transfer, maximising data privacy and accessibility. Robust logging features further enhance transparency and reproducibility by recording all prompt iterations and outputs.">
+<script src="pkgdown.js"></script><meta property="og:title" content="Data Extraction for Meta-Analysis with Large Language Models">
+<meta property="og:description" content="Use Large Language Models (LLMs) to assist with data extraction for meta-analysis. This package incorporates three modular Shiny apps to implement a human-in-the-loop framework. (1) a manual extraction interface for abstracts, (2) refining prompt engineering and model selection, and (3) validation of LLM-generated outputs. These apps enable researchers to iteratively collaborate with LLMs, with each abstract undergoing double data extraction—once manually by a human researcher and once independently by an LLM-assisted process—to emulate the double extraction process recommended by international standards. Notably, the package runs fully on local machines, with no need for API setup or external data transfer, maximising data privacy and accessibility. Robust logging features further enhance transparency and reproducibility by recording all prompt iterations and outputs.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -46,7 +46,14 @@
   <a href="news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/DanyangDai/metaextractoR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -60,7 +67,6 @@
   <div class="contents col-md-9">
 
 
-<!-- badges: end -->
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -69,19 +75,18 @@
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"danyangdai/metaextractoR"</span><span class="op">)</span></span></code></pre></div>
 <p>Download and install Large Language Models (LLMs) for local usage supported by <code>metaextractoR</code>. Run the code below in Terminal or Console to install models:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>ollama run your_choice_of_models</span></code></pre></div>
-<p>Explore your choice of models: <a href="https://ollama.com" class="external-link">Ollama</a></p>
-<p>Currently this version of the package only supports local LLMs.</p>
+<p>Explore your choice of models at <a href="https://ollama.com" class="external-link">Ollama</a>. Currently this version of the package only supports local LLMs via Ollama.</p>
 </div>
 <div class="section level2">
 <h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
 </h2>
 <p>This package design fit in to the <a href="https://www.prisma-statement.org/" class="external-link">Preferred Reporting Items for Systematic reviews and Meta-Analyses (PRISMA)</a> guideline for systematic review and meta-analysis.</p>
 <p>For systematic review and meta-analysis, users are encouraged to follow the study protocol developed for the systematic review and meta-analysis. This package will streamline the data extraction part in your systematic review with the power of Large Language Models (LLMs) while keeping a human in the loop for accuracy and oversight.</p>
-<p>For documentation: see working paper <a href="">working paper</a></p>
+<p>For more information, see our working paper <a href="https://github.com/DanyangDai/LLM-Meta-Analysis/blob/main/RSM/RSM.pdf" class="external-link">here</a>.</p>
 <div class="section level3">
 <h3 id="id_1-getting-the-abstract-information">1. Getting the abstract information<a class="anchor" aria-label="anchor" href="#id_1-getting-the-abstract-information"></a>
 </h3>
-<p>Once full-text review has been completed, you should have a list of articles included for the full-text extraction. At this stage, the user should have an csv file that contains a list of abstracts. If you are using <a href="https://www.covidence.org" class="external-link">Covidence</a>, the csv file can be downloaded following the steps below:</p>
+<p>Once full-text review has been completed, you should have a list of articles included for the full-text extraction. At this stage, the user should have a csv file that contains a list of abstracts. If you are using <a href="https://www.covidence.org" class="external-link">Covidence</a>, the csv file can be downloaded following the steps below:</p>
 <p><img src="reference/figures/export_abs_1.gif"></p>
 <p>If you are using free reference management software such as <a href="https://www.zotero.org/" class="external-link">Zotero</a>, the csv file contains abstracts can be exported following the steps below:</p>
 <p><img src="reference/figures/export_abs_2.gif"></p>
@@ -90,13 +95,43 @@
 <div class="section level3">
 <h3 id="id_2-adding-new-columns-to-the-raw-abstract-file">2. Adding new columns to the raw abstract file<a class="anchor" aria-label="anchor" href="#id_2-adding-new-columns-to-the-raw-abstract-file"></a>
 </h3>
-<p>Once you have download or exported the csv file containing the abstracts, you can read in the csv file to your R environment.</p>
-<p>Following your systematic review protocol, we are going to create empty columns with pre-defined data extraction elements by using the function: <code>add_predefined_vars</code>.</p>
-<p>Example for using <code>add_predefined_vars</code></p>
+<p>Once you have download or exported the csv file containing the abstracts, you can read in the csv file to your R environment. Below we use our example data.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">abstracts_wt_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_predefined_vars.html">add_predefined_vars</a></span><span class="op">(</span><span class="va">abstracts</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no_participants"</span>,<span class="st">"no_aki"</span>,<span class="st">"age_mean"</span>,<span class="st">"age_sd"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">abstracts_wt_vars</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DanyangDai/metaextractoR" class="external-link">metaextractoR</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">abstracts</span><span class="op">)</span></span>
+<span><span class="co">#&gt; tibble [50 × 8] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;  $ Title          : chr [1:50] "Development of a Risk Score for AKI onset in COVID-19 Patients: COV-AKI Score" "Risk factors associated with acute kidney injury in a cohort of hospitalized patients with COVID-19" "Clinical Features and Outcomes of Acute Kidney Injury in Critically Ill COVID-19 Patients: A Retrospective Observational Study" "Acute kidney injury in coronavirus infectious disease: a study of incidence, risk factors, and prognosis during"| __truncated__ ...</span></span>
+<span><span class="co">#&gt;  $ Authors        : chr [1:50] "Palomba, H.; Cubos, D.; Bozza, F.; Zampieri, F.G.; Romano, T.G." "Contreras-Villamizar, K.; Barbosa, O.; Muñoz, A.C.; Suárez, J.S.; González, C.A.; Vargas, D.C.; Rodríguez-Sánch"| __truncated__ "Bouguezzi, N.; Ben Saida, I.; Toumi, R.; Meddeb, K.; Ennouri, E.; Bedhiafi, A.; Hamdi, D.; Boussarsar, M." "Magalhães, L.E.; de Oliveira, P.G.S.; Favarin, A.J.; Yuasa, B.K.; Cardoso, P.A.; Zamoner, W.; Ponce, D." ...</span></span>
+<span><span class="co">#&gt;  $ Abstract       : chr [1:50] "Purpose: Acute Kidney Injury (AKI) in COVID-19 patients is associated with increased morbidity and mortality. I"| __truncated__ "Background: Patients with COVID-19 have a high incidence of acute kidney injury (AKI), which is associated with"| __truncated__ "Background: An alarming number of COVID-19 patients, especially in severe cases, have developed acute kidney in"| __truncated__ "Introduction: Acute kidney injury (AKI) is one of the main complications of COVID-19 caused by SARS-CoV-2. This"| __truncated__ ...</span></span>
+<span><span class="co">#&gt;  $ Published Year : num [1:50] 2023 2023 2023 2023 2023 ...</span></span>
+<span><span class="co">#&gt;  $ Published Month: chr [1:50] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ Journal        : chr [1:50] "BMC Nephrology" "BMC Nephrology" "Journal of Clinical Medicine" "International Urology and Nephrology" ...</span></span>
+<span><span class="co">#&gt;  $ DOI            : chr [1:50] "10.1186/s12882-023-03095-4" "10.1186/s12882-023-03172-8" "10.3390/jcm12155127" "10.1007/s11255-022-03454-4" ...</span></span>
+<span><span class="co">#&gt;  $ Covidence #    : chr [1:50] "#3896" "#3901" "#3981" "#4035" ...</span></span></code></pre></div>
+<p>Following your systematic review protocol, we are going to create empty columns with pre-defined data extraction elements by using the function, <code>add_predefined_vars</code>. The new columns create placeholders for values entered either manuallly or extracted from a LLM.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">abstracts_wt_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_predefined_vars.html">add_predefined_vars</a></span><span class="op">(</span></span>
+<span>  <span class="va">abstracts</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no_participants"</span>, <span class="st">"no_aki"</span>, <span class="st">"age_mean"</span>, <span class="st">"age_sd"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">abstracts_wt_vars</span><span class="op">)</span></span>
+<span><span class="co">#&gt; tibble [50 × 16] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;  $ Title                 : chr [1:50] "Development of a Risk Score for AKI onset in COVID-19 Patients: COV-AKI Score" "Risk factors associated with acute kidney injury in a cohort of hospitalized patients with COVID-19" "Clinical Features and Outcomes of Acute Kidney Injury in Critically Ill COVID-19 Patients: A Retrospective Observational Study" "Acute kidney injury in coronavirus infectious disease: a study of incidence, risk factors, and prognosis during"| __truncated__ ...</span></span>
+<span><span class="co">#&gt;  $ Authors               : chr [1:50] "Palomba, H.; Cubos, D.; Bozza, F.; Zampieri, F.G.; Romano, T.G." "Contreras-Villamizar, K.; Barbosa, O.; Muñoz, A.C.; Suárez, J.S.; González, C.A.; Vargas, D.C.; Rodríguez-Sánch"| __truncated__ "Bouguezzi, N.; Ben Saida, I.; Toumi, R.; Meddeb, K.; Ennouri, E.; Bedhiafi, A.; Hamdi, D.; Boussarsar, M." "Magalhães, L.E.; de Oliveira, P.G.S.; Favarin, A.J.; Yuasa, B.K.; Cardoso, P.A.; Zamoner, W.; Ponce, D." ...</span></span>
+<span><span class="co">#&gt;  $ Abstract              : chr [1:50] "Purpose: Acute Kidney Injury (AKI) in COVID-19 patients is associated with increased morbidity and mortality. I"| __truncated__ "Background: Patients with COVID-19 have a high incidence of acute kidney injury (AKI), which is associated with"| __truncated__ "Background: An alarming number of COVID-19 patients, especially in severe cases, have developed acute kidney in"| __truncated__ "Introduction: Acute kidney injury (AKI) is one of the main complications of COVID-19 caused by SARS-CoV-2. This"| __truncated__ ...</span></span>
+<span><span class="co">#&gt;  $ Published Year        : num [1:50] 2023 2023 2023 2023 2023 ...</span></span>
+<span><span class="co">#&gt;  $ Published Month       : chr [1:50] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ Journal               : chr [1:50] "BMC Nephrology" "BMC Nephrology" "Journal of Clinical Medicine" "International Urology and Nephrology" ...</span></span>
+<span><span class="co">#&gt;  $ DOI                   : chr [1:50] "10.1186/s12882-023-03095-4" "10.1186/s12882-023-03172-8" "10.3390/jcm12155127" "10.1007/s11255-022-03454-4" ...</span></span>
+<span><span class="co">#&gt;  $ Covidence #           : chr [1:50] "#3896" "#3901" "#3981" "#4035" ...</span></span>
+<span><span class="co">#&gt;  $ no_participants_manual: logi [1:50] NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ no_aki_manual         : logi [1:50] NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ age_mean_manual       : logi [1:50] NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ age_sd_manual         : logi [1:50] NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ no_participants_llm   : logi [1:50] NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ no_aki_llm            : logi [1:50] NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ age_mean_llm          : logi [1:50] NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ age_sd_llm            : logi [1:50] NA NA NA NA NA NA ...</span></span></code></pre></div>
 <p>Before processing to the next step, check the current dataset contains all the data items with <code>_llm</code> and <code>_manual</code>. Most importantly, this data must contains abstract column. Use <code><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames()</a></code> function to check the available variables in the dataset.</p>
 </div>
 <div class="section level3">
@@ -105,27 +140,60 @@
 <p>We are going to separate the full abstracts sample into traning and testing sets.</p>
 <p>The training set will be used in Shinyapp 1 <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code> and Shinyapp 2 <code><a href="reference/prompt_engineering_app.html">prompt_engineering_app()</a></code>.</p>
 <p>Using function <code><a href="reference/separate_training.html">separate_training()</a></code> to divide the full sample into training and testing. Follow the example:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">separate_abs</span> <span class="op">&lt;-</span> <span class="fu">separte_training</span><span class="op">(</span><span class="va">abstracts_wt_vars</span>, percentage <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">separate_abs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/separate_training.html">separate_training</a></span><span class="op">(</span><span class="va">abstracts_wt_vars</span>, percentage <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
 <p>To make sure that we are consistent with our training set and to avoid contamination of the testing set, we will save the training and testing abstracts into csv files.</p>
 <p>To save the training set: <code><a href="reference/save_training_data.html">save_training_data()</a></code>. This function will create a folder named “metaextractor_data” folder under your current working directory. If you could not find your current working directory, use <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code> to find your current working directory. Follow the example to save the training and testing csv files:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/save_training_data.html">save_training_data</a></span><span class="op">(</span><span class="va">separate_abs</span><span class="op">$</span><span class="va">train</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/save_testing_data.html">save_testing_data</a></span><span class="op">(</span><span class="va">separate_abs</span><span class="op">$</span><span class="va">test</span><span class="op">)</span></span></code></pre></div>
-<p>Notice that you should have two <code>.csv</code> file saved to <code>metaextractor_data</code> folder, one called: “training_stage_0_data.csv” another called: “testing_stage_0_data.csv”. The name of the file has been pre-fixed to ensure the correct file goes into the Shinyapps.</p>
+<p>Notice that you should have two <code>.csv</code> file saved to <code>metaextractor_data</code> folder under the current working directory, one called: “training_stage_0_data.csv” another called: “testing_stage_0_data.csv”. The name of the file has been pre-fixed to ensure the correct file goes into the Shinyapps.</p>
 </div>
 <div class="section level3">
-<h3 id="id_4-identify-varaible-that-is-avaiable-for-extraction">4. Identify varaible that is avaiable for extraction<a class="anchor" aria-label="anchor" href="#id_4-identify-varaible-that-is-avaiable-for-extraction"></a>
+<h3 id="id_4-glance_manual_app-manual-data-extraction-from-abstracts-for-the-training-set">4. <code>glance_manual_app()</code>: manual data extraction from abstracts for the training set.<a class="anchor" aria-label="anchor" href="#id_4-glance_manual_app-manual-data-extraction-from-abstracts-for-the-training-set"></a>
 </h3>
-<p>This extraction step aims to identify data items that is available in the abstract.</p>
+<p>Under the <code>metaextractor_data</code> folder, the <code>training_stage_0_data.csv</code> file should be uploaded to the <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code> Shinyapp.</p>
+<p>To load the <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code> run code.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glance_manual_app.html">glance_manual_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/app1.gif"></p>
+<p>To see more detailed usage of this <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code>, see YouTube video:</p>
+</div>
+<div class="section level3">
+<h3 id="id_5-prompt_engineering_app-prompt-enginnering-and-model-selection">5. <code>prompt_engineering_app()</code>: prompt enginnering and model selection<a class="anchor" aria-label="anchor" href="#id_5-prompt_engineering_app-prompt-enginnering-and-model-selection"></a>
+</h3>
+<p>Once the manual extraction is completed with the <code><a href="reference/glance_manual_app.html">glance_manual_app()</a></code>, the testing data should be saved. The saved data should be used in the prompt engineering Shinyapp.</p>
+<p><img src="reference/figures/app2.gif"></p>
+<p>To see more detailed usage of this <code><a href="reference/prompt_engineering_app.html">prompt_engineering_app()</a></code>, see YouTube video:</p>
+<p>Each of the tested prompt and model is recorded and saved as a csv file in the <code>log_files</code> folder.</p>
+</div>
+<div class="section level3">
+<h3 id="id_6-batch-process-with-process_with_ollama">6. Batch process with <code>process_with_ollama</code>
+<a class="anchor" aria-label="anchor" href="#id_6-batch-process-with-process_with_ollama"></a>
+</h3>
+<p>Once the most ideal prompt and model is selected, use the <code>process_with_ollama</code> for the testing with LLMs to extract the data elements.</p>
+</div>
+<div class="section level3">
+<h3 id="id_7-manual-check-with-manual_validation_app">7. Manual check with <code>manual_validation_app()</code>
+<a class="anchor" aria-label="anchor" href="#id_7-manual-check-with-manual_validation_app"></a>
+</h3>
+<p>Once LLM extraction on the testing set been completed, use the <code><a href="reference/manual_validation_app.html">manual_validation_app()</a></code> to manually check the LLM extraction values.</p>
 </div>
 </div>
 
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/DanyangDai/metaextractoR/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/DanyangDai/metaextractoR/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
@@ -144,18 +212,16 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Danyang Dai <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0006-3984-291X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Danyang Dai <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0009-0006-3984-291X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Emi Tanaka <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-1455-259X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Jason Pole <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-0413-5434" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://CRAN.R-project.org/package=metaextractoR" class="external-link"><img src="http://www.r-pkg.org/badges/version/metaextractoR" alt="version"></a></li>
-<li><a href="https://CRAN.R-project.org/package=metaextractoR" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/metaextractoR" alt="cranlogs"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
 
@@ -165,7 +231,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Danyang Dai, Emi Tanaka, Jason Pole.</p>
+<p>Developed by Danyang Dai, Emi Tanaka.</p>
 </div>
 
 <div class="pkgdown">

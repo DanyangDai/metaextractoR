@@ -11,7 +11,7 @@ Use Large Language Models (LLMs) to assist with data extraction for meta-analysi
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/DanyangDai/metaextractoR}
+  \item \url{https://danyangdai.github.io/metaextractoR/}
   \item Report bugs at \url{https://github.com/DanyangDai/metaextractoR/issues}
 }
 

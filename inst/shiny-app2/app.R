@@ -12,6 +12,9 @@ original_wd <- normalizePath("./")
 
 library(bslib)
 library(shinyFiles)
+library(curl)
+library(httr)
+library(httr2)
 # check functions
 
 ollama_installed <- function() {
@@ -36,7 +39,6 @@ ollama_running <- function() {
     return(TRUE)
   }
 }
-library(shiny)
 
 show_datatable <- function(.data, app_number, edit = FALSE) {
   if(app_number == 1) {

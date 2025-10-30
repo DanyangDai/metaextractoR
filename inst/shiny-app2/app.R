@@ -113,7 +113,7 @@ ui <- page_sidebar(
       selectInput(
         "model_name",
         "Model Name",
-        choices = ellmer::models_ollama(),
+        choices = list(ellmer::models_ollama()),
         width = "100%"
       ),
       selectInput(

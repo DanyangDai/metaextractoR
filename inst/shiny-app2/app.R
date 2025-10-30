@@ -238,15 +238,17 @@ server <- function(input, output, session) {
   # Don't know how
   temp <- NULL
 
-  log_dir <- file.path(original_wd,"log_files")
+  path <- file.path(original_wd,"log_files")
+
+  normalized_path <- normalizePath(path , winslash = "/", mustWork = FALSE)
 
   temp_log_file <- file.path(original_wd, paste0("log_files", tempfile(tmpdir = "", fileext = ".csv")))
 
-  if (!dir.exists(log_dir)) {
-    dir.create(log_dir)
-    message("Folder created: ", log_dir)
+  if (!dir.exists(normalized_path)) {
+    dir.create(normalized_path)
+    message("Folder created: ", normalized_path)
   } else {
-    message("Folder already exists: ", log_dir)
+    message("Folder already exists: ", normalized_path)
   }
 
   current_data <- reactiveVal()

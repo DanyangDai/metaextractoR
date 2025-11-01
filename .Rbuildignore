@@ -8,3 +8,4 @@
 ^\.github$
 ^_pkgdown\.yml$
 ^pkgdown$
+^man/figures$

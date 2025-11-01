@@ -53,13 +53,13 @@ should have a csv file that contains a list of abstracts. If you are
 using [Covidence](https://www.covidence.org), the csv file can be
 downloaded following the steps below:
 
-![](man/figures/export_abs_1.gif)
+![](https://danyangdai.github.io/metaextractoR/reference/figures/export_abs_1.gif)
 
 If you are using free reference management software such as
 [Zotero](https://www.zotero.org/), the csv file contains abstracts can
 be exported following the steps below:
 
-![](man/figures/export_abs_2.gif)
+![](https://danyangdai.github.io/metaextractoR/reference/figures/export_abs_2.gif)
 
 You can also use the sample data provided to you using
 `data("abstracts")` to load in a sample abstracts downloaded from
@@ -168,7 +168,7 @@ To load the `glance_manual_app()` run code.
 glance_manual_app()
 ```
 
-![](man/figures/app1.gif)
+![](https://danyangdai.github.io/metaextractoR/reference/figures/app1.gif)
 
 To see more detailed usage of this `glance_manual_app()`, see YouTube
 video: [Introduction to metaextractoR - Part 2,
@@ -180,7 +180,7 @@ Once the manual extraction is completed with the `glance_manual_app()`,
 the testing data should be saved. The saved data should be used in the
 prompt engineering Shinyapp.
 
-![](man/figures/app2.gif)
+![](https://danyangdai.github.io/metaextractoR/reference/figures/app2.gif)
 
 To see more detailed usage of this `prompt_engineering_app()`, see
 YouTube video: [Introduction to metaextractoR - Part 3,
@@ -202,7 +202,7 @@ elements.
 Once LLM extraction on the testing set been completed, use the
 `manual_validation_app()` to manually check the LLM extraction values.
 
-![](man/figures/app3.gif)
+![](https://danyangdai.github.io/metaextractoR/reference/figures/app3.gif)
 
 To see more detailed usage of this `manual_validation_app()`, see
 YouTube video: [Introduction to metaextractoR - Part 4,

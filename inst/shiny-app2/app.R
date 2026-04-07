@@ -381,13 +381,13 @@ server <- function(input, output, session) {
 
     chat <- ellmer::chat_ollama(
       model = input$model_name,
-      seed = 1,
+      #seed = 1,
       api_args = list(temperature = 0)
     )
 
     processed <- lapply(df[[input$abstract_col]], function(abstract) {
       bot <- chat$clone()
-      bot$extract_data(abstract, type = type_abstract)
+      bot$chat_structured(abstract, type = type_abstract)
     })
 
     data[current, input$var_llm] <- ifelse(
